@@ -1,6 +1,6 @@
 defmodule FightingTheLandlord.Poker do
   @doc """
-  Create a new suit of 54 cards deck, shuffle it and return. Deck is a list of tuples.
+  Create a new suit of 54 cards deck, shuffle it and split to 17, 17, 17, 3 as 4 parts and return. Deck is a list of tuples.
   Each card is a tuple {weight, suit}.
   The weights represent the weight of the card, "3" to "10" have weights from 3 to 10.
   "11" -> "J"
@@ -9,7 +9,12 @@ defmodule FightingTheLandlord.Poker do
   "14" -> "A"
   "15" -> "2"
   """
-  def new do
+  def deal_cards do
+    # dvide to 4 parts
+    new() |> Enum.chunk_every(17) |> Enum.map(fn hand -> sort(hand) end)
+  end
+
+  defp new do
     # the black and white joker is the littele joker which has weight of 50
     # the red joker is the big joker which has weight of 100.
     (for weight <- weights(), suit <- suits() do
@@ -33,8 +38,27 @@ defmodule FightingTheLandlord.Poker do
     cards |> Enum.sort() |> Enum.reverse()
   end
 
-  # Asssume all the cards are sorted in descending order
+  def is_first_beat_second?({type1, weight1}, {type2, weight2}) do
+    if type1 === type2 do
+      weight2 > weight1
+    else
+      false
+    end
+  end
 
+  # helper function for :chains and :pair_chains
+  defp is_chain?(hands) do
+    [head | _] = hands
+
+    if head < 15 do
+      {list, _} = hands |> Enum.map_reduce(head + 1, fn x, acc -> {acc - x, acc = x} end)
+      list |> Enum.all?(fn x -> x === 1 end)
+    else
+      false
+    end
+  end
+
+  # Assume all the cards are sorted in descending order
   # when the length of the cards is 1
   def category_of_hands([{a, _}]) do
     {{:solo, nil}, a}
@@ -102,24 +126,12 @@ defmodule FightingTheLandlord.Poker do
   # even though we did not use every variables, we are emphsizing that each weight should be distinct
   def category_of_hands([{a, _}, {b, _}, {c, _}, {d, _}, {e, _}]) do
     # "chain" can't have "2"
-    if a - e === 4 and a < 15 do
+    if is_chain?([a, b, c, d, e]) do
       {{:chain, 5}, a}
     end
   end
 
   # when the length of cards is 6
-  def category_of_hands([{a, _}, {a, _}, {b, _}, {b, _}, {c, _}, {c, _}]) do
-    if a - c === 2 and a < 15 do
-      {{:pair_chain, 6}, a}
-    end
-  end
-
-  def category_of_hands([{a, _}, {a, _}, {a, _}, {b, _}, {b, _}, {b, _}]) do
-    if a - b === 1 and a < 15 do
-      {{:airplane, 6}, a}
-    end
-  end
-
   def category_of_hands([{_, _}, {_, _}, {a, _}, {a, _}, {a, _}, {a, _}]) do
     # two cases here: "3333 4 5" or "3333 44"
     {{:four_with_two, nil}, a}
@@ -139,9 +151,21 @@ defmodule FightingTheLandlord.Poker do
     {{:four_with_pairs, nil}, a + b}
   end
 
+  def category_of_hands([{a, _}, {a, _}, {b, _}, {b, _}, {c, _}, {c, _}]) do
+    if is_chain?([a, b, c]) do
+      {{:pair_chain, 6}, a}
+    end
+  end
+
+  def category_of_hands([{a, _}, {a, _}, {a, _}, {b, _}, {b, _}, {b, _}]) do
+    if a - b === 1 and a < 15 do
+      {{:airplane, 6}, a}
+    end
+  end
+
   def category_of_hands([{a, _}, {b, _}, {c, _}, {d, _}, {e, _}, {f, _}]) do
     # "chain" can't have "2"
-    if a - f === 5 and a < 15 do
+    if is_chain?([a, b, c, d, e, f]) do
       {{:chain, 6}, a}
     end
   end
@@ -149,33 +173,27 @@ defmodule FightingTheLandlord.Poker do
   # when the length of cards is 7
   def category_of_hands([{a, _}, {b, _}, {c, _}, {d, _}, {e, _}, {f, _}, {g, _}]) do
     # "chain" can't have "2"
-    if a - g === 6 and a < 15 do
+    if is_chain?([a, b, c, d, e, f, g]) do
       {{:chain, 7}, a}
     end
   end
 
   # when the length of cards is 8
-  def category_of_hands([{a, _}, {a, _}, {b, _}, {b, _}, {c, _}, {c, _}, {d, _}, {d, _}]) do
-    if a - d === 3 and a < 15 do
-      {{:pair_chain, 8}, a}
-    end
-  end
-
   # two consecutive bomb like "3333 4444" can be played as airplane
   def category_of_hands([{a, _}, {a, _}, {a, _}, {b, _}, {b, _}, {b, _}, {_, _}, {_, _}]) do
-    if a - b === 1 and a < 2 do
+    if a - b === 1 and a < 15 do
       {{:airplane_with_solos, 8}, a}
     end
   end
 
   def category_of_hands([{_, _}, {_, _}, {a, _}, {a, _}, {a, _}, {b, _}, {b, _}, {b, _}]) do
-    if a - b === 1 and a < 2 do
+    if a - b === 1 and a < 15 do
       {{:airplane_with_solos, 8}, a}
     end
   end
 
   def category_of_hands([{_, _}, {a, _}, {a, _}, {a, _}, {b, _}, {b, _}, {b, _}, {_, _}]) do
-    if a - b === 1 and a < 2 do
+    if a - b === 1 and a < 15 do
       {{:airplane_with_solos, 8}, a}
     end
   end
@@ -192,9 +210,15 @@ defmodule FightingTheLandlord.Poker do
     {{:four_with_two_pairs, nil}, a}
   end
 
+  def category_of_hands([{a, _}, {a, _}, {b, _}, {b, _}, {c, _}, {c, _}, {d, _}, {d, _}]) do
+    if is_chain?([a, b, c, d]) do
+      {{:pair_chain, 8}, a}
+    end
+  end
+
   def category_of_hands([{a, _}, {b, _}, {c, _}, {d, _}, {e, _}, {f, _}, {g, _}, {h, _}]) do
     # "chain" can't have "2"
-    if a - h === 7 and a < 15 do
+    if is_chain?([a, b, c, d, e, f, g, h]) do
       {{:chain, 8}, a}
     end
   end
@@ -208,29 +232,12 @@ defmodule FightingTheLandlord.Poker do
 
   def category_of_hands([{a, _}, {b, _}, {c, _}, {d, _}, {e, _}, {f, _}, {g, _}, {h, _}, {i, _}]) do
     # "chain" can't have "2"
-    if a - i === 8 and a < 15 do
+    if is_chain?([a, b, c, d, e, f, g, h, i]) do
       {{:chain, 9}, a}
     end
   end
 
   # when the length of the cards is 10
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _}
-      ]) do
-    if a - e === 4 and a < 15 do
-      {{:pair_chain, 10}, a}
-    end
-  end
-
   def category_of_hands([
         {a, _},
         {a, _},
@@ -284,6 +291,23 @@ defmodule FightingTheLandlord.Poker do
 
   def category_of_hands([
         {a, _},
+        {a, _},
+        {b, _},
+        {b, _},
+        {c, _},
+        {c, _},
+        {d, _},
+        {d, _},
+        {e, _},
+        {e, _}
+      ]) do
+    if is_chain?([a, b, c, d, e]) do
+      {{:pair_chain, 10}, a}
+    end
+  end
+
+  def category_of_hands([
+        {a, _},
         {b, _},
         {c, _},
         {d, _},
@@ -295,7 +319,7 @@ defmodule FightingTheLandlord.Poker do
         {j, _}
       ]) do
     # "chain" can't have "2"
-    if a - j === 9 and a < 15 do
+    if is_chain?([a, b, c, d, e, f, g, h, i, j]) do
       {{:chain, 10}, a}
     end
   end
@@ -315,51 +339,12 @@ defmodule FightingTheLandlord.Poker do
         {k, _}
       ]) do
     # "chain" can't have "2"
-    if a - k === 10 and a < 15 do
+    if is_chain?([a, b, c, d, e, f, g, h, i, j, k]) do
       {{:chain, 11}, a}
     end
   end
 
   # when the length of the cards is 12
-  def category_of_hands([
-        {a, _},
-        {b, _},
-        {c, _},
-        {d, _},
-        {e, _},
-        {f, _},
-        {g, _},
-        {h, _},
-        {i, _},
-        {j, _},
-        {k, _},
-        {l, _}
-      ]) do
-    # "chain" can't have "2"
-    if a - l === 11 and a < 15 do
-      {{:chain, 12}, a}
-    end
-  end
-
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _}
-      ]) do
-    if a - f === 5 and a < 15 do
-      {{:pair_chain, 12}, a}
-    end
-  end
-
   def category_of_hands([
         {a, _},
         {a, _},
@@ -376,6 +361,25 @@ defmodule FightingTheLandlord.Poker do
       ]) do
     if a - d === 3 and a < 15 do
       {{:airplane, 12}, a}
+    end
+  end
+
+  def category_of_hands([
+        {a, _},
+        {a, _},
+        {a, _},
+        {_, _},
+        {b, _},
+        {b, _},
+        {b, _},
+        {_, _},
+        {c, _},
+        {c, _},
+        {c, _},
+        {_, _}
+      ]) do
+    if a - c === 2 and a < 15 do
+      {{:airplane_with_solos, 12}, a}
     end
   end
 
@@ -455,6 +459,45 @@ defmodule FightingTheLandlord.Poker do
     end
   end
 
+  def category_of_hands([
+        {a, _},
+        {a, _},
+        {b, _},
+        {b, _},
+        {c, _},
+        {c, _},
+        {d, _},
+        {d, _},
+        {e, _},
+        {e, _},
+        {f, _},
+        {f, _}
+      ]) do
+    if is_chain?([a, b, c, d, e, f]) do
+      {{:pair_chain, 12}, a}
+    end
+  end
+
+  def category_of_hands([
+        {a, _},
+        {b, _},
+        {c, _},
+        {d, _},
+        {e, _},
+        {f, _},
+        {g, _},
+        {h, _},
+        {i, _},
+        {j, _},
+        {k, _},
+        {l, _}
+      ]) do
+    # "chain" can't have "2"
+    if is_chain?([a, b, c, d, e, f, g, h, i, j, k, l]) do
+      {{:chain, 12}, a}
+    end
+  end
+
   # when length is 13, nothing illegal
 
   # when the length of the cards is 14
@@ -474,7 +517,7 @@ defmodule FightingTheLandlord.Poker do
         {g, _},
         {g, _}
       ]) do
-    if a - g === 6 and a < 15 do
+    if is_chain?([a, b, c, d, e, f, g]) do
       {{:pair_chain, 14}, a}
     end
   end
@@ -591,26 +634,27 @@ defmodule FightingTheLandlord.Poker do
   end
 
   # when the length of the cards is 16
+
   def category_of_hands([
+        {_, _},
         {a, _},
         {a, _},
+        {a, _},
+        {_, _},
         {b, _},
         {b, _},
+        {b, _},
+        {_, _},
         {c, _},
         {c, _},
+        {c, _},
+        {_, _},
         {d, _},
         {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {g, _},
-        {g, _},
-        {h, _},
-        {h, _}
+        {d, _}
       ]) do
-    if a - h === 7 and a < 15 do
-      {{:pair_chain, 16}, a}
+    if a - d === 3 and a < 15 do
+      {{:airplane_with_solos, 16}, a}
     end
   end
 
@@ -729,8 +773,6 @@ defmodule FightingTheLandlord.Poker do
     end
   end
 
-  # when length is 17, only illegal cards
-  # when the length of the cards is 18
   def category_of_hands([
         {a, _},
         {a, _},
@@ -747,15 +789,15 @@ defmodule FightingTheLandlord.Poker do
         {g, _},
         {g, _},
         {h, _},
-        {h, _},
-        {i, _},
-        {i, _}
+        {h, _}
       ]) do
-    if a - i === 8 and a < 15 do
-      {{:pair_chain, 18}, a}
+    if is_chain?([a, b, c, d, e, f, g, h]) do
+      {{:pair_chain, 16}, a}
     end
   end
 
+  # when length is 17, only illegal cards
+  # when the length of the cards is 18
   def category_of_hands([
         {a, _},
         {a, _},
@@ -781,9 +823,6 @@ defmodule FightingTheLandlord.Poker do
     end
   end
 
-  # when length is 19, only illegal cards
-
-  # when the length of the cards is 20
   def category_of_hands([
         {a, _},
         {a, _},
@@ -802,33 +841,61 @@ defmodule FightingTheLandlord.Poker do
         {h, _},
         {h, _},
         {i, _},
-        {i, _},
-        {j, _},
-        {j, _}
+        {i, _}
       ]) do
-    if a - j === 9 and a < 15 do
-      {{:pair_chain, 20}, a}
+    if is_chain?([a, b, c, d, e, f, g, h, i]) do
+      {{:pair_chain, 18}, a}
+    end
+  end
+
+  # when length is 19, only illegal cards
+
+  # when the length of the cards is 20
+  def category_of_hands([
+        {_, _},
+        {_, _},
+        {_, _},
+        {_, _},
+        {_, _},
+        {a, _},
+        {a, _},
+        {a, _},
+        {b, _},
+        {b, _},
+        {b, _},
+        {c, _},
+        {c, _},
+        {c, _},
+        {d, _},
+        {d, _},
+        {d, _},
+        {e, _},
+        {e, _},
+        {e, _}
+      ]) do
+    if a - e === 4 and a < 15 do
+      {{:airplane_with_solos, 20}, a}
     end
   end
 
   def category_of_hands([
         {_, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _},
         {a, _},
         {a, _},
         {a, _},
+        {_, _},
         {b, _},
         {b, _},
         {b, _},
+        {_, _},
         {c, _},
         {c, _},
         {c, _},
+        {_, _},
         {d, _},
         {d, _},
         {d, _},
+        {_, _},
         {e, _},
         {e, _},
         {e, _}
@@ -1106,5 +1173,36 @@ defmodule FightingTheLandlord.Poker do
     if a - d === 3 and a < 15 do
       {{:airplane_with_pairs, 20}, a}
     end
+  end
+
+  def category_of_hands([
+        {a, _},
+        {a, _},
+        {b, _},
+        {b, _},
+        {c, _},
+        {c, _},
+        {d, _},
+        {d, _},
+        {e, _},
+        {e, _},
+        {f, _},
+        {f, _},
+        {g, _},
+        {g, _},
+        {h, _},
+        {h, _},
+        {i, _},
+        {i, _},
+        {j, _},
+        {j, _}
+      ]) do
+    if is_chain?([a, b, c, d, e, f, g, h, i, j]) do
+      {{:pair_chain, 20}, a}
+    end
+  end
+
+  def category_of_hands(_) do
+    nil
   end
 end
