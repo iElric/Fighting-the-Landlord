@@ -64,6 +64,10 @@ defmodule FightingTheLandlord.Game do
     end
   end
 
+  defp play_cards_helper(game_state, player_id, cards) do
+    
+  end
+
   def play_cards(game_state, player_id, card_indexes)
       when guard_player_id(player_id) do
     if game_state[:phase] === :card_play and game_state[:whose_turn] === player_id do
