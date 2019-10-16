@@ -39,16 +39,17 @@ defmodule FightingTheLandlord.Poker do
   end
 
   def is_first_beat_second?({type1, weight1}, {type2, weight2}) do
-    if type1 === type2 do
-      weight2 > weight1
-    else
-      false
+    cond do
+      type1 === type2 -> weight1 > weight2
+      type1 === {:bomb, nil} -> true
+      true -> false
     end
   end
 
   # helper function for :chains and :pair_chains
   defp is_chain?(hands) do
     [head | _] = hands
+
     if head < 15 do
       # hack my way to use acc as a previous pointer
       {list, _} = hands |> Enum.map_reduce(head + 1, fn x, acc -> {acc - x, acc = x} end)
