@@ -10,12 +10,12 @@ defmodule FightingTheLandlord.Poker do
   "15" -> "2"
   """
   def deal_cards do
-    # dvide to 4 parts
+    # divide to 4 parts
     new() |> Enum.chunk_every(17) |> Enum.map(fn hand -> sort(hand) end)
   end
 
   defp new do
-    # the black and white joker is the littele joker which has weight of 50
+    # the black and white joker is the little joker which has weight of 50
     # the red joker is the big joker which has weight of 100.
     (for weight <- weights(), suit <- suits() do
        {weight, suit}
@@ -49,8 +49,8 @@ defmodule FightingTheLandlord.Poker do
   # helper function for :chains and :pair_chains
   defp is_chain?(hands) do
     [head | _] = hands
-
     if head < 15 do
+      # hack my way to use acc as a previous pointer
       {list, _} = hands |> Enum.map_reduce(head + 1, fn x, acc -> {acc - x, acc = x} end)
       list |> Enum.all?(fn x -> x === 1 end)
     else
