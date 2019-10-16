@@ -64,8 +64,43 @@ defmodule FightingTheLandlord.Game do
     end
   end
 
-  defp play_cards_helper(game_state, player_id, cards) do
-    
+  defp calculate_score(game_state) do
+    %{
+      landlord_id
+    }
+    landlord_id = game_state.landlord
+    winner_id = game_state.previous_winner
+    if landlord_id === winner_id do
+
+    end
+  end
+
+  def play_cards_helper(game_state, player_id, cards) do
+    current_hand = Enum.at(game_state.hands, player_id)
+    current_hand = current_hand -- cards
+    updated_hands = List.replace_at(game_state.hands, player_id, current_hand)
+    game_state
+    |> Map.put(:previous_play, {player_id, cards})
+    |> Map.put(:hands, updated_hands)
+    if length(current_hand) === 0 and game_state.remaining_games === 1 do
+      game_state
+      |> Map.put(:remainning_game, 0)
+      |> Map.put(:previous_winner, player_id)
+
+    else
+      if length(current_hand) === 0 do
+        new_remaining_game = game_state.remainig_game - 1
+        new_previous_winner = player_id
+        new_points = calculate_score()
+        new_game_state = new(new_remaining_game)
+        new_remaining_game
+        |> Map.put(:previous_winner, new_previous_winner)
+        |> Map.put(:points, new_points)
+      else
+        game_state
+        |> Map.put(:whose_turn, rem(game_state.whose_turn + 1, 3))
+      end
+    end
   end
 
   def play_cards(game_state, player_id, card_indexes)
@@ -84,7 +119,7 @@ defmodule FightingTheLandlord.Game do
           {cur_type, cur_weight} = category
           {prev_type, prev_weight} = Poker.category_of_hands(game_previous_cards)
 
-          if cur_type === prev_type and cur_weight > prev_weight do
+          if Poker.is_first_beat_second?({cur_type, cur_weight}, {prev_type, prev_weight}) do
             hand = hand -- cards
 
             if length(hand) === 0 do
