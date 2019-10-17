@@ -16,8 +16,10 @@ defmodule FightingTheLandlord.Game do
       phase: :call_landlord,
       # playerid
       landlord: nil,
+      call_landlord_pass_counter: 0,
       # playerid
-      whose_turn: nil,
+      # in call landlord phase, this indicates whose turn to call, in card play phase, this indicate whose turn to play
+      whose_turn: Enum.random(0..2),
       # in phase call_landlord, the hands is list of length 4, the first three are players' hands, the fourth is 3 left overs card_index_list
       # in phase card_play, the hands is list of length 3, all of them are players'hands
       # the indexes corresponds to playerid
@@ -29,6 +31,26 @@ defmodule FightingTheLandlord.Game do
       previous_play: {nil, nil}
     }
   end
+
+  def player_view(
+        %{
+          remaining_games: game_remaining_games,
+          phase: :call_landlord,
+          landlord: game_landlord,
+          call_landlord_pass_counter: game_call_landlord_counter,
+          whose_turn: game_whose_turn,
+          hands: game_hands,
+          points: game_points,
+          previous_play: game_previous_play
+        },
+        player_id
+      ) when guard_player_id(player_id) do
+    %{
+      remaining_games: game_remaining_games,
+      phase: :call_landlord,
+    }
+  end
+
 
   def call_landlord(game_state, player_id)
       when guard_player_id(player_id) do
@@ -80,6 +102,7 @@ defmodule FightingTheLandlord.Game do
       # if this player win but it is not the last round
       new(game_state.remaining_games)
       |> Map.put(:previous_winner, winner_id)
+      |> Map.put(:whose_turn, winner_id)
       |> Map.put(:points, game_state.points)
     end
   end
@@ -191,11 +214,12 @@ defmodule FightingTheLandlord.Game do
     end
   end
 
-  def retrieve_cards(_, [], acc) do
+  defp retrieve_cards(_, [], acc) do
     Enum.reverse(acc)
   end
 
-  def retrieve_cards(hands, card_indexes, acc) do
+  # hands are list which has been passed to Enum.with_index
+  defp retrieve_cards(hands, card_indexes, acc) do
     [head1 | tail1] = hands
     [head2 | tail2] = card_indexes
     {card, index} = head1
