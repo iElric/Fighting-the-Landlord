@@ -5,18 +5,19 @@ defmodule FightingTheLandlord.Game do
 
   defguardp guard_player_id(player_id) when player_id >= 0 and player_id <= 2
 
-  def new(number_of_games) when number_of_games > 0 do
+  def new() do
     # new a game state
     %{
       # often we have several round of games, at the end of these games, the one with highest points wins
-      remaining_games: number_of_games,
+      # remaining_games: number_of_games,
       # the previous round winner get the priority to call landlord first
-      previous_winner: nil,
+      # previous_winner: nil,
       # indicate current game phase: 1. call_landlord 2. card_play
       phase: :call_landlord,
       # playerid
       landlord: nil,
-      call_landlord_pass_counter: 0,
+
+      # call_landlord_pass_counter: 0,
       # playerid
       # in call landlord phase, this indicates whose turn to call, in card play phase, this indicate whose turn to play
       whose_turn: Enum.random(0..2),
@@ -24,6 +25,8 @@ defmodule FightingTheLandlord.Game do
       # in phase card_play, the hands is list of length 3, all of them are players'hands
       # the indexes corresponds to playerid
       hands: Poker.deal_cards(),
+      # players is a list of string to hold players' name
+      players: [],
       points: [0, 0, 0],
       # each bomb in this round of game will result the base point * 2
       bomb_number: 0,
@@ -34,23 +37,68 @@ defmodule FightingTheLandlord.Game do
 
   def player_view(
         %{
-          remaining_games: game_remaining_games,
-          phase: :call_landlord,
+          phase: :card_play,
           landlord: game_landlord,
-          call_landlord_pass_counter: game_call_landlord_counter,
           whose_turn: game_whose_turn,
           hands: game_hands,
           points: game_points,
-          previous_play: game_previous_play
+          previous_play: {game_previous_player, game_previous_played_cards},
+          players: game_players
         },
         player_id
       ) when guard_player_id(player_id) do
     %{
-      remaining_games: game_remaining_games,
-      phase: :call_landlord,
+      phase: :card_play,
+      landlord: relative_position(game_landlord, player_id),
+      left: %{
+        name: Enum.at(game_players, rem(player_id + 2, 3)),
+        points: Enum.at(game_points, rem(player_id + 2, 3)),
+        cards_left: length(Enum.at(game_hands, rem(player_id + 2, 3)))
+      },
+      right: %{
+        name: Enum.at(game_players, rem(player_id + 1, 3)),
+        points: Enum.at(game_points, rem(player_id + 1, 3)),
+        cards_left: length(Enum.at(game_hands, rem(player_id + 1, 3)))
+      },
+      active: game_whose_turn === player_id,
+      hands: Enum.at(game_hands, player_id),
+      previous_play: %{
+        position: relative_position(game_previous_player, player_id),
+        cards: game_previous_played_cards
+      }
     }
   end
 
+  # calculate the player_id position relative to base_id
+  defp relative_position(base_id, player_id) do
+    cond do
+      base_id === player_id ->
+        :self
+      base_id === rem(player_id + 1, 3) ->
+        :right
+      true -> :left
+    end
+  end
+
+  # TODO: convert player name to index
+  def name_to_index(game_state, player_name) do
+
+  end
+
+  def add_player(game_state, player_name) do
+    %{players: game_players} = game_state
+    game_players = game_players
+                   |> Enum.reverse
+    game_players = [player_name | game_players]
+    game_players = game_players
+                   |> Enum.reverse
+    game_state
+    |> Map.put(:players, game_players)
+  end
+
+  def has_enough_players?(game_state) do
+    length(game_state.players) >= 3
+  end
 
   def call_landlord(game_state, player_id)
       when guard_player_id(player_id) do
@@ -73,6 +121,27 @@ defmodule FightingTheLandlord.Game do
     |> Map.put(:hands, game_hands)
   end
 
+  def call_landlord(game_state) do
+    %{hands: game_hands} = game_state
+    player_id = game_state.whose_turn
+    landlord_hands = Poker.sort(Enum.at(game_hands, player_id) ++ Enum.at(game_hands, 3))
+    # update the landlord hands and delete the leftover cards
+    game_hands = List.replace_at(game_hands, player_id, landlord_hands)
+                 |> Enum.reverse()
+                 |> tl()
+                 |> Enum.reverse()
+
+    game_state
+    # specify the landlord
+    |> Map.put(:landlord, player_id)
+      # update phase
+    |> Map.put(:phase, :card_play)
+      # landlord start first
+    # |> Map.put(:whose_turn, player_id)
+      # update landlord hands
+    |> Map.put(:hands, game_hands)
+  end
+
   @doc """
   Return winner id if the winner exist, return nil otherwise
   """
@@ -91,25 +160,31 @@ defmodule FightingTheLandlord.Game do
 
   # Start a new round
   def start_new_round(game_state, winner_id) when guard_player_id(winner_id) do
+    #game_state = game_state
+    # |> Map.put(:remaining_games, game_state.remaining_games - 1)
+    # |> Map.put(:previous_winner, winner_id)
+    # |> calculate_score()
+    #if game_state.remaining_games === 0 do
+    # if this player win this round and this is the last round
+    #game_state
+    #else
+    # if this player win but it is not the last round
+    # new(game_state.remaining_games)
+    #|> Map.put(:previous_winner, winner_id)
+    #|> Map.put(:whose_turn, winner_id)
+    # |> Map.put(:points, game_state.points)
+    #end
     game_state = game_state
-                 |> Map.put(:remaining_games, game_state.remaining_games - 1)
-                 |> Map.put(:previous_winner, winner_id)
+                 |> Map.put(:whose_turn, winner_id)
                  |> calculate_score()
-    if game_state.remaining_games === 0 do
-      # if this player win this round and this is the last round
-      game_state
-    else
-      # if this player win but it is not the last round
-      new(game_state.remaining_games)
-      |> Map.put(:previous_winner, winner_id)
-      |> Map.put(:whose_turn, winner_id)
-      |> Map.put(:points, game_state.points)
-    end
+    new()
+    |> Map.put(:whose_turn, winner_id)
+    |> Map.put(:points, game_state.points)
   end
 
   defp calculate_score(game_state) do
     %{
-      previous_winner: game_previous_winner,
+      whose_turn: game_whose_turn,
       landlord: game_landlord,
       points: game_points,
       bomb_number: game_bomb_number
@@ -118,7 +193,7 @@ defmodule FightingTheLandlord.Game do
     score = (@base_point * :math.pow(2, game_bomb_number))
             |> round()
 
-    if game_landlord === game_previous_winner do
+    if game_landlord === game_whose_turn do
       game_points
       |> Enum.with_index()
       |> Enum.map(
@@ -146,7 +221,6 @@ defmodule FightingTheLandlord.Game do
   end
 
   defp play_cards_helper(game_state, player_id, cards) do
-    IO.inspect("helper is called!")
     current_hand = Enum.at(game_state.hands, player_id)
     current_hand = current_hand -- cards
     updated_hands = List.replace_at(game_state.hands, player_id, current_hand)
@@ -156,6 +230,10 @@ defmodule FightingTheLandlord.Game do
     |> Map.put(:hands, updated_hands)
     |> Map.put(:whose_turn, rem(game_state.whose_turn + 1, 3))
   end
+
+  @doc """
+  Return nil if this play is illegal, otherwise return the new game_state
+  """
 
   def play_cards(game_state, player_id, card_indexes)
       when guard_player_id(player_id) do
@@ -205,11 +283,23 @@ defmodule FightingTheLandlord.Game do
   def pass(game_state, player_id) do
     if game_state.phase === :card_play and game_state.whose_turn === player_id do
       {previous_player, _} = game_state.previous_play
+      # can't pass if the player is the previous player who played cards
       if previous_player === player_id do
         nil
       else
         game_state
         |> Map.put(:whose_turn, rem(game_state.whose_turn + 1, 3))
+      end
+    end
+  end
+
+  #TODO: write a function to pass the landlord
+
+  def pass_landlord(game_state, player_id) do
+    if game_state.phase === :call_landlord and game_state.whose_turn === player_id do
+      if game_state.call_landlord_pass_counter === 2 do
+        # start a new round
+
       end
     end
   end

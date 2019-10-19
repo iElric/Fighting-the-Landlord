@@ -3,6 +3,7 @@ defmodule FightingTheLandlordWeb.UserSocket do
 
   ## Channels
   # channel "room:*", FightingTheLandlordWeb.RoomChannel
+  channel "games:*", FightingTheLandlordWeb.GamesChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
