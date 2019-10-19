@@ -35,6 +35,10 @@ defmodule FightingTheLandlord.Game do
     }
   end
 
+  @doc """
+  This is the view for player.
+  """
+
   def player_view(
         %{
           phase: :card_play,
@@ -53,20 +57,77 @@ defmodule FightingTheLandlord.Game do
       left: %{
         name: Enum.at(game_players, rem(player_id + 2, 3)),
         points: Enum.at(game_points, rem(player_id + 2, 3)),
-        cards_left: length(Enum.at(game_hands, rem(player_id + 2, 3)))
+        cards: length(Enum.at(game_hands, rem(player_id + 2, 3)))
       },
       right: %{
         name: Enum.at(game_players, rem(player_id + 1, 3)),
         points: Enum.at(game_points, rem(player_id + 1, 3)),
-        cards_left: length(Enum.at(game_hands, rem(player_id + 1, 3)))
+        cards: length(Enum.at(game_hands, rem(player_id + 1, 3)))
+      },
+      self: %{
+        name: Enum.at(game_players, player_id),
+        points: Enum.at(game_points, player_id),
+        cards: Enum.at(game_hands, player_id)
       },
       active: game_whose_turn === player_id,
-      hands: Enum.at(game_hands, player_id),
       previous_play: %{
         position: relative_position(game_previous_player, player_id),
         cards: game_previous_played_cards
       }
     }
+  end
+
+  @doc """
+  This is the view for observer.
+  """
+  # TODO: refactor this
+  def player_view(
+        %{
+          phase: :card_play,
+          landlord: game_landlord,
+          whose_turn: game_whose_turn,
+          hands: game_hands,
+          points: game_points,
+          previous_play: {game_previous_player, game_previous_played_cards},
+          players: game_players
+        },
+        player_id
+      ) when player_id > 2 do
+    %{
+      phase: :card_play,
+      landlord: position(game_landlord),
+      left: %{
+        name: Enum.at(game_players, 0),
+        points: Enum.at(game_points, 0),
+        cards: Enum.at(game_hands, 0)
+      },
+      right: %{
+        name: Enum.at(game_players, 1),
+        points: Enum.at(game_points, 1),
+        cards: Enum.at(game_hands, 1)
+      },
+      self: %{
+        name: Enum.at(game_players, 2),
+        points: Enum.at(game_points, 2),
+        cards: Enum.at(game_hands, 2)
+      },
+      active: false,
+      previous_play: %{
+        position: position(game_previous_player),
+        cards: game_previous_played_cards
+      }
+    }
+  end
+
+  defp position(player_id) do
+    cond do
+      player_id === 0 ->
+        :left
+      player_id === 1 ->
+        :right
+      true ->
+        :self
+    end
   end
 
   # calculate the player_id position relative to base_id
@@ -80,9 +141,12 @@ defmodule FightingTheLandlord.Game do
     end
   end
 
-  # TODO: convert player name to index
+  @doc """
+  Ensure that the players list in game_state contains only unique names.
+  Return the index of that player_name if it exist. Otherwise return nil.
+  """
   def name_to_index(game_state, player_name) do
-
+    Enum.find_index(game_state.players, fn name -> name === player_name end)
   end
 
   def add_player(game_state, player_name) do
@@ -137,7 +201,7 @@ defmodule FightingTheLandlord.Game do
       # update phase
     |> Map.put(:phase, :card_play)
       # landlord start first
-    # |> Map.put(:whose_turn, player_id)
+      # |> Map.put(:whose_turn, player_id)
       # update landlord hands
     |> Map.put(:hands, game_hands)
   end
