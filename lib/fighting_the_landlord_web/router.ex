@@ -17,6 +17,9 @@ defmodule FightingTheLandlordWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/game/:table_name", PageController, :game
+    post "/game/:table_name", PageController, :game
+
   end
 
   # Other scopes may use custom stacks.

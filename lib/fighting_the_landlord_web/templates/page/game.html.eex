@@ -1,0 +1,78 @@
+
+<script>
+window.table_name = "<%= @table_name%>";
+window.user_name = localStorage.getItem('user_name');
+window.images_path = {
+   "3_spades": "<%= Routes.static_path(@conn, "/images/3_spades.jpg") %>",
+   "4_spades": "<%= Routes.static_path(@conn, "/images/4_spades.jpg") %>",
+   "5_spades": "<%= Routes.static_path(@conn, "/images/5_spades.jpg") %>",
+   "6_spades": "<%= Routes.static_path(@conn, "/images/6_spades.jpg") %>",
+   "7_spades": "<%= Routes.static_path(@conn, "/images/7_spades.jpg") %>",
+   "8_spades": "<%= Routes.static_path(@conn, "/images/8_spades.jpg") %>",
+   "9_spades": "<%= Routes.static_path(@conn, "/images/9_spades.jpg") %>",
+   "10_spades": "<%= Routes.static_path(@conn, "/images/10_spades.jpg") %>",
+   "11_spades": "<%= Routes.static_path(@conn, "/images/11_spades.jpg") %>",
+   "12_spades": "<%= Routes.static_path(@conn, "/images/12_spades.jpg") %>",
+   "13_spades": "<%= Routes.static_path(@conn, "/images/13_spades.jpg") %>",
+   "14_spades": "<%= Routes.static_path(@conn, "/images/14_spades.jpg") %>",
+   "15_spades": "<%= Routes.static_path(@conn, "/images/15_spades.jpg") %>",
+   
+   "3_hearts": "<%= Routes.static_path(@conn, "/images/3_hearts.jpg") %>",
+   "4_hearts": "<%= Routes.static_path(@conn, "/images/4_hearts.jpg") %>",
+   "5_hearts": "<%= Routes.static_path(@conn, "/images/5_hearts.jpg") %>",
+   "6_hearts": "<%= Routes.static_path(@conn, "/images/6_hearts.jpg") %>",
+   "7_hearts": "<%= Routes.static_path(@conn, "/images/7_hearts.jpg") %>",
+   "8_hearts": "<%= Routes.static_path(@conn, "/images/8_hearts.jpg") %>",
+   "9_hearts": "<%= Routes.static_path(@conn, "/images/9_hearts.jpg") %>",
+   "10_hearts": "<%= Routes.static_path(@conn, "/images/10_hearts.jpg") %>",
+   "11_hearts": "<%= Routes.static_path(@conn, "/images/11_hearts.jpg") %>",
+   "12_hearts": "<%= Routes.static_path(@conn, "/images/12_hearts.jpg") %>",
+   "13_hearts": "<%= Routes.static_path(@conn, "/images/13_hearts.jpg") %>",
+   "14_hearts": "<%= Routes.static_path(@conn, "/images/14_hearts.jpg") %>",
+   "15_hearts": "<%= Routes.static_path(@conn, "/images/15_hearts.jpg") %>",
+
+   "3_clubs": "<%= Routes.static_path(@conn, "/images/3_clubs.jpg") %>",
+   "4_clubs": "<%= Routes.static_path(@conn, "/images/4_clubs.jpg") %>",
+   "5_clubs": "<%= Routes.static_path(@conn, "/images/5_clubs.jpg") %>",
+   "6_clubs": "<%= Routes.static_path(@conn, "/images/6_clubs.jpg") %>",
+   "7_clubs": "<%= Routes.static_path(@conn, "/images/7_clubs.jpg") %>",
+   "8_clubs": "<%= Routes.static_path(@conn, "/images/8_clubs.jpg") %>",
+   "9_clubs": "<%= Routes.static_path(@conn, "/images/9_clubs.jpg") %>",
+   "10_clubs": "<%= Routes.static_path(@conn, "/images/10_clubs.jpg") %>",
+   "11_clubs": "<%= Routes.static_path(@conn, "/images/11_clubs.jpg") %>",
+   "12_clubs": "<%= Routes.static_path(@conn, "/images/12_clubs.jpg") %>",
+   "13_clubs": "<%= Routes.static_path(@conn, "/images/13_clubs.jpg") %>",
+   "14_clubs": "<%= Routes.static_path(@conn, "/images/14_clubs.jpg") %>",
+   "15_clubs": "<%= Routes.static_path(@conn, "/images/15_clubs.jpg") %>",
+
+
+   "3_diamonds": "<%= Routes.static_path(@conn, "/images/3_diamonds.jpg") %>",
+   "4_diamonds": "<%= Routes.static_path(@conn, "/images/4_diamonds.jpg") %>",
+   "5_diamonds": "<%= Routes.static_path(@conn, "/images/5_diamonds.jpg") %>",
+   "6_diamonds": "<%= Routes.static_path(@conn, "/images/6_diamonds.jpg") %>",
+   "7_diamonds": "<%= Routes.static_path(@conn, "/images/7_diamonds.jpg") %>",
+   "8_diamonds": "<%= Routes.static_path(@conn, "/images/8_diamonds.jpg") %>",
+   "9_diamonds": "<%= Routes.static_path(@conn, "/images/9_diamonds.jpg") %>",
+   "10_diamonds": "<%= Routes.static_path(@conn, "/images/10_diamonds.jpg") %>",
+   "11_diamonds": "<%= Routes.static_path(@conn, "/images/11_diamonds.jpg") %>",
+   "12_diamonds": "<%= Routes.static_path(@conn, "/images/12_diamonds.jpg") %>",
+   "13_diamonds": "<%= Routes.static_path(@conn, "/images/13_diamonds.jpg") %>",
+   "14_diamonds": "<%= Routes.static_path(@conn, "/images/14_diamonds.jpg") %>",
+   "15_diamonds": "<%= Routes.static_path(@conn, "/images/15_diamonds.jpg") %>",
+
+   "50_little_joker": "<%= Routes.static_path(@conn, "/images/50_little_joker.jpg") %>",
+   "100_big_joker": "<%= Routes.static_path(@conn, "/images/100_big_joker.jpg") %>",
+   "back": "<%= Routes.static_path(@conn, "/images/back.png") %>",
+   "pass": "<%= Routes.static_path(@conn, "/images/pass.jpg") %>",
+   "play": "<%= Routes.static_path(@conn, "/images/play.jpg") %>",
+}
+//window.back_path = "<%= Routes.static_path(@conn, "/images/back.png") %>";
+
+</script>
+<div id= "root">
+   <p> React </p>
+   <p><%= @table_name%></p>
+   <p>"print()"</p>
+   <p><button id = "submit" onClick = "print()">
+   <img src="<%= Routes.static_path(@conn, "/images/14_spades.jpg") %>"/></button></p>
+</div>

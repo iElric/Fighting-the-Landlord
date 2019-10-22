@@ -9,9 +9,19 @@ import css from "../css/app.css"
 //
 // Import dependencies
 //
-import "phoenix_html"
+import "phoenix_html";
+import $ from "jquery";
 
 // Import local files
 //
 // Local files can be imported directly using relative paths, for example:
-// import socket from "./socket"
+import socket from "./socket"
+import fighting_the_lanlord_init from "./starter-game"
+
+$(() => {
+    let root = document.getElementById('root');
+    if(root) {
+        let channel = socket.channel("games:" + window.gameName, {});
+        fighting_the_lanlord_init(root, channel);
+    }
+})
