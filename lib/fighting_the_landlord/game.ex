@@ -352,7 +352,8 @@ defmodule FightingTheLandlord.Game do
     if game_state.phase === :card_play and game_state.whose_turn === player_id do
       {previous_player, _} = game_state.previous_play
       # can't pass if the player is the previous player who played cards
-      if previous_player === player_id do
+      # can't pass if the player is the first one to play in this game
+      if previous_player === player_id or previous_player === nil do
         nil
       else
         game_state
