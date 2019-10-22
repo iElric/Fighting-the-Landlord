@@ -1,6 +1,4 @@
 <script>
-  
-
   function jump() {
      localStorage.setItem('user_name', document.getElementById("user_name").value);
      let name = document.getElementById("table_name").value;

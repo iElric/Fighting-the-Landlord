@@ -71,8 +71,4 @@ window.images_path = {
 </script>
 <div id= "root">
    <p> React </p>
-   <p><%= @table_name%></p>
-   <p>"print()"</p>
-   <p><button id = "submit" onClick = "print()">
-   <img src="<%= Routes.static_path(@conn, "/images/14_spades.jpg") %>"/></button></p>
 </div>

@@ -51,12 +51,6 @@ class FightingTheLandLord extends React.Component {
             ctx.clearRect(0, 0, 1500, 1000);
             this.updateCanvas(ctx);
         }
-
-        /*if (this.props.userID !== prevProps.userID) {
-            console.log(",");
-            //this.fetchData(this.props.userID);
-            this.updateCanvas();
-        }*/
     }
 
 
@@ -122,12 +116,65 @@ class FightingTheLandLord extends React.Component {
                 i++;
             })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
         ctx.fillText(this.state.self.name, 650, 350);
-        ctx.fillText(this.state.self.score, 680, 350);
+        ctx.fillText(this.state.self.points, 680, 350);
     }
 
     drawSides(ctx) {
+        let dy = 20;
+        let observer_dy = 30;
+        let j = 0, k = 0;
+        let backImg = new Image();
+        let backImg1 = new Image();
+        backImg.src = images_path["back"];
+        backImg1.src = images_path["back"];
+        if (this.state.left.cards !== null) {
+            let left_card_left = this.state.left.cards;
+            if (typeof (this.state.left.cards) === "number") {
+                backImg1.onload = function () {
+                    for (let i = 0; i < left_card_left; i++) {
+                        ctx.drawImage(backImg1, 10, 55 + i * dy, 100, 150);
+                        console.log("draw left back" + i);
+                    }
+                }
+                
+                ctx.fillText("Cards Left: " + left_card_left, 0, 40);
+            }
+            else {
+                Promise.all(left_card_left.map(x => this.loadImage(images_path[x])))
+                    .then((images) => images.forEach((image, j) => {
+                        ctx.drawImage(image, 10, 55 + j * observer_dy);
+                        j++;
+                    })).catch((err) => { console.log(err); });
+            }
+        }
+        ctx.fillText("Score: " + this.state.left.points, 0, 10);
+        ctx.fillText("Name: " + this.state.left.name, 0, 25);
 
-        let left_card_left = this.state.left.cards;
+
+        if (this.state.right.card !== null) {
+            let right_card_left = this.state.right.cards;
+            if (typeof (this.state.right.cards) === "number") {
+                backImg.onload = function() {
+                    for (let i = 0; i < right_card_left; i++) {
+                        ctx.drawImage(backImg, 1350, 55 + i * dy, 100, 150);
+                    }
+                }
+                
+                ctx.fillText("Cards Left: " + right_card_left, 1400, 40);
+            }
+            else {
+                Promise.all(right_card_left.map(x => this.loadImage(images_path[x])))
+                    .then((images) => images.forEach((image, k) => {
+                        ctx.drawImage(image, 1350, 55 + k * observer_dy);
+                        k++;
+                    })).catch((err) => { console.log(err); });
+            }
+        }
+        ctx.fillText("Score: " + this.state.left.points, 1400, 10);
+        ctx.fillText("Name: " + this.state.left.name, 1400, 25);
+
+
+        /*let left_card_left = this.state.left.cards;
         let right_card_left = this.state.left.cards;
         let backImg = new Image();
         backImg.src = images_path["back"];
@@ -140,7 +187,7 @@ class FightingTheLandLord extends React.Component {
         backImg.onload = function () {
             ctx.drawImage(backImg, 0, 50, 100, 150);
             ctx.drawImage(backImg, 1300, 50, 100, 150);
-        }
+        }*/
     }
 
     drawPreviousPlay(ctx) {
