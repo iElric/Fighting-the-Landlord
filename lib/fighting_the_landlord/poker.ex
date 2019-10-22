@@ -17,7 +17,11 @@ defmodule FightingTheLandlord.Poker do
   end
 
   def card_string(cards) do
-    Enum.map(cards, fn {weight, suit} -> to_string(weight)<>"_"<>to_string(suit) end)
+    if is_nil(cards) do
+      nil
+    else
+      Enum.map(cards, fn {weight, suit} -> to_string(weight) <> "_" <> to_string(suit) end)
+    end
   end
 
   defp new do

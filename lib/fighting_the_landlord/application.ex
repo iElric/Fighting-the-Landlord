@@ -13,7 +13,7 @@ defmodule FightingTheLandlord.Application do
       # Starts a worker by calling: FightingTheLandlord.Worker.start_link(arg)
       # {FightingTheLandlord.Worker, arg},
       FightingTheLandlord.GameSup,
-      FightingTheLandlord.BackupAgent
+      FightingTheLandlord.BackupAgent,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

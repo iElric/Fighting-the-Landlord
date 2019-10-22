@@ -2,19 +2,21 @@ defmodule FightingTheLandlordWeb.GamesChannel do
   use FightingTheLandlordWeb, :channel
 
   alias FightingTheLandlord.Game
-  alias FightingTheLandlord.BackupAgent
   alias FightingTheLandlord.GameServer
 
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
+      IO.inspect(name)
       GameServer.start(name)
-      game = GameServer.peek(name)
       %{"player_name" => player_name} = payload
-      {game, player_id} = GameServer.add_player(game, player_name)
+      IO.inspect(player_name)
+      {game, player_id} = GameServer.add_player(name, player_name)
+      IO.inspect(player_id)
+      IO.inspect(game)
       socket = socket
                |> assign(:name, name)
                |> assign(:player_id, player_id)
-      broadcast!(socket, "player_joined", game)
+      send(self(), :after_join)
       if Game.has_enough_players?(game) do
         {:ok, %{"join" => name, "game" => Game.player_view(game, player_id)}, socket}
       else
@@ -41,6 +43,13 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     {:reply, {:ok, %{"game" => Game.player_view(game, player_id)}}, socket}
   end
 
+  def handle_info(:after_join, socket) do
+    name = socket.assigns[:name]
+    game = GameServer.peek(name)
+    broadcast!(socket, "player_joined", game)
+    {:noreply, socket}
+  end
+
   intercept ["player_joined", "player_played", "player_passed"]
 
   def handle_out("player_joined", game, socket) do
@@ -50,16 +59,19 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     else
       push(socket, "player_joined", %{"game" => nil})
     end
+    {:noreply, socket}
   end
 
   def handle_out("player_played", game, socket) do
     player_id = socket.assigns[:player_id]
     push(socket, "player_played", %{"game" => Game.player_view(game, player_id)})
+    {:noreply, socket}
   end
 
   def handle_out("player_passed", game, socket) do
     player_id = socket.assigns[:player_id]
     push(socket, "player_passed", %{"game" => Game.player_view(game, player_id)})
+    {:noreply, socket}
   end
 
   # Add authorization logic here as required.
