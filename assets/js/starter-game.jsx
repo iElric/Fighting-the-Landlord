@@ -30,17 +30,19 @@ class FightingTheLandLord extends React.Component {
             .receive("ok", this.got_view.bind(this))
             .receive("error", resp => { console.log("Unable to join", resp); });
 
-/*
-        this.channel.on("update", this.got_view.bind(this));
-*/
+        /*
+                this.channel.on("update", this.got_view.bind(this));
+        */
     }
 
     componentDidMount() {
         console.log("mount");
-        this.refs.canvas.addEventListener("mousedown", this.onDown.bind(this), false);
-        const ctx = this.refs.canvas.getContext('2d');
-        console.log("mount1");
-        this.updateCanvas(ctx);
+        if (this.state.phase === "card_play") {
+            this.refs.canvas.addEventListener("mousedown", this.onDown.bind(this), false);
+            const ctx = this.refs.canvas.getContext('2d');
+            console.log("mount1");
+            this.updateCanvas(ctx);
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -49,7 +51,7 @@ class FightingTheLandLord extends React.Component {
             console.log("updateww");
             const ctx = this.refs.canvas.getContext('2d');
             console.log("updatewweeee");
-            ctx.clearRect(0,0, 1000, 1000);
+            ctx.clearRect(0, 0, 1000, 1000);
             this.updateCanvas(ctx);
         }
 
