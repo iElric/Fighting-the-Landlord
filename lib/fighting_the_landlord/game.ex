@@ -80,12 +80,10 @@ defmodule FightingTheLandlord.Game do
   @doc """
   This is the view for observer.
   """
-  # TODO: refactor this
   def player_view(
         %{
           phase: :card_play,
           landlord: game_landlord,
-          whose_turn: game_whose_turn,
           hands: game_hands,
           points: game_points,
           previous_play: {game_previous_player, game_previous_played_cards},
@@ -145,19 +143,25 @@ defmodule FightingTheLandlord.Game do
   Ensure that the players list in game_state contains only unique names.
   Return the index of that player_name if it exist. Otherwise return nil.
   """
-  def name_to_index(game_state, player_name) do
+  defp name_to_index(game_state, player_name) do
     Enum.find_index(game_state.players, fn name -> name === player_name end)
   end
 
   def add_player(game_state, player_name) do
-    %{players: game_players} = game_state
-    game_players = game_players
-                   |> Enum.reverse
-    game_players = [player_name | game_players]
-    game_players = game_players
-                   |> Enum.reverse
-    game_state
-    |> Map.put(:players, game_players)
+    index = name_to_index(game_state, player_name)
+    if is_nil(index) do
+      # add player name and return the game_state and index
+      %{players: game_players} = game_state
+      game_players = game_players
+                     |> Enum.reverse
+      game_players = [player_name | game_players]
+      game_players = game_players
+                     |> Enum.reverse
+      {Map.put(game_state, :players, game_players), length(game_players) - 1}
+    else
+      # return the game_state and previous index if the name is already in the list
+      {game_state, index}
+    end
   end
 
   def has_enough_players?(game_state) do
@@ -357,16 +361,15 @@ defmodule FightingTheLandlord.Game do
     end
   end
 
-  #TODO: write a function to pass the landlord
 
-  def pass_landlord(game_state, player_id) do
-    if game_state.phase === :call_landlord and game_state.whose_turn === player_id do
-      if game_state.call_landlord_pass_counter === 2 do
-        # start a new round
+  #def pass_landlord(game_state, player_id) do
+  #if game_state.phase === :call_landlord and game_state.whose_turn === player_id do
+  #if game_state.call_landlord_pass_counter === 2 do
+  # start a new round
 
-      end
-    end
-  end
+  #end
+  #end
+  #end
 
   defp retrieve_cards(_, [], acc) do
     Enum.reverse(acc)

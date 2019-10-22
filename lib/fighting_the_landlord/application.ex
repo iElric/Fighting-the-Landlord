@@ -9,9 +9,11 @@ defmodule FightingTheLandlord.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      FightingTheLandlordWeb.Endpoint
+      FightingTheLandlordWeb.Endpoint,
       # Starts a worker by calling: FightingTheLandlord.Worker.start_link(arg)
       # {FightingTheLandlord.Worker, arg},
+      FightingTheLandlord.GameSup,
+      FightingTheLandlord.BackupAgent
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
