@@ -67,12 +67,12 @@ defmodule FightingTheLandlord.Game do
       self: %{
         name: Enum.at(game_players, player_id),
         points: Enum.at(game_points, player_id),
-        cards: Enum.at(game_hands, player_id)
+        cards: Enum.at(game_hands, player_id) |> Poker.card_string()
       },
       active: game_whose_turn === player_id,
       previous_play: %{
         position: relative_position(game_previous_player, player_id),
-        cards: game_previous_played_cards
+        cards: game_previous_played_cards |> Poker.card_string()
       }
     }
   end
@@ -97,22 +97,22 @@ defmodule FightingTheLandlord.Game do
       left: %{
         name: Enum.at(game_players, 0),
         points: Enum.at(game_points, 0),
-        cards: Enum.at(game_hands, 0)
+        cards: Enum.at(game_hands, 0) |> Poker.card_string()
       },
       right: %{
         name: Enum.at(game_players, 1),
         points: Enum.at(game_points, 1),
-        cards: Enum.at(game_hands, 1)
+        cards: Enum.at(game_hands, 1) |> Poker.card_string()
       },
       self: %{
         name: Enum.at(game_players, 2),
         points: Enum.at(game_points, 2),
-        cards: Enum.at(game_hands, 2)
+        cards: Enum.at(game_hands, 2) |> Poker.card_string()
       },
       active: false,
       previous_play: %{
         position: position(game_previous_player),
-        cards: game_previous_played_cards
+        cards: game_previous_played_cards |> Poker.card_string()
       }
     }
   end

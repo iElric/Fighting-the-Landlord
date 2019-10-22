@@ -11,7 +11,13 @@ defmodule FightingTheLandlord.Poker do
   """
   def deal_cards do
     # divide to 4 parts
-    new() |> Enum.chunk_every(17) |> Enum.map(fn hand -> sort(hand) end)
+    new()
+    |> Enum.chunk_every(17)
+    |> Enum.map(fn hand -> sort(hand) end)
+  end
+
+  def card_string(cards) do
+    Enum.map(cards, fn {weight, suit} -> to_string(weight)<>"_"<>to_string(suit) end)
   end
 
   defp new do
@@ -35,7 +41,9 @@ defmodule FightingTheLandlord.Poker do
   Sort a list of cards by value in descending order.
   """
   def sort(cards) do
-    cards |> Enum.sort() |> Enum.reverse()
+    cards
+    |> Enum.sort()
+    |> Enum.reverse()
   end
 
   def is_first_beat_second?({type1, weight1}, {type2, weight2}) do
@@ -52,8 +60,10 @@ defmodule FightingTheLandlord.Poker do
 
     if head < 15 do
       # hack my way to use acc as a previous pointer
-      {list, _} = hands |> Enum.map_reduce(head + 1, fn x, acc -> {acc - x, acc = x} end)
-      list |> Enum.all?(fn x -> x === 1 end)
+      {list, _} = hands
+                  |> Enum.map_reduce(head + 1, fn x, acc -> {acc - x, acc = x} end)
+      list
+      |> Enum.all?(fn x -> x === 1 end)
     else
       false
     end
@@ -239,86 +249,96 @@ defmodule FightingTheLandlord.Poker do
   end
 
   # when the length of the cards is 10
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _}
+        ]
+      ) do
     if a - b === 1 and a < 15 do
       {{:airplane_with_pairs, 10}, a}
     end
   end
 
-  def category_of_hands([
-        {c, _},
-        {c, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {d, _},
-        {d, _}
-      ]) do
+  def category_of_hands(
+        [
+          {c, _},
+          {c, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {d, _},
+          {d, _}
+        ]
+      ) do
     if a - b === 1 and a < 15 do
       {{:airplane_with_pairs, 10}, a}
     end
   end
 
-  def category_of_hands([
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _}
-      ]) do
+  def category_of_hands(
+        [
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _}
+        ]
+      ) do
     if a - b === 1 and a < 15 do
       {{:airplane_with_pairs, 10}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _}
+        ]
+      ) do
     if is_chain?([a, b, c, d, e]) do
       {{:pair_chain, 10}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {b, _},
-        {c, _},
-        {d, _},
-        {e, _},
-        {f, _},
-        {g, _},
-        {h, _},
-        {i, _},
-        {j, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {b, _},
+          {c, _},
+          {d, _},
+          {e, _},
+          {f, _},
+          {g, _},
+          {h, _},
+          {i, _},
+          {j, _}
+        ]
+      ) do
     # "chain" can't have "2"
     if is_chain?([a, b, c, d, e, f, g, h, i, j]) do
       {{:chain, 10}, a}
@@ -326,19 +346,21 @@ defmodule FightingTheLandlord.Poker do
   end
 
   # when the length of the cards is 11
-  def category_of_hands([
-        {a, _},
-        {b, _},
-        {c, _},
-        {d, _},
-        {e, _},
-        {f, _},
-        {g, _},
-        {h, _},
-        {i, _},
-        {j, _},
-        {k, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {b, _},
+          {c, _},
+          {d, _},
+          {e, _},
+          {f, _},
+          {g, _},
+          {h, _},
+          {i, _},
+          {j, _},
+          {k, _}
+        ]
+      ) do
     # "chain" can't have "2"
     if is_chain?([a, b, c, d, e, f, g, h, i, j, k]) do
       {{:chain, 11}, a}
@@ -346,153 +368,169 @@ defmodule FightingTheLandlord.Poker do
   end
 
   # when the length of the cards is 12
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane, 12}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {_, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {_, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {_, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {_, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {_, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_solos, 12}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {_, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {_, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_solos, 12}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_solos, 12}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {_, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_solos, 12}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_solos, 12}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _}
+        ]
+      ) do
     if is_chain?([a, b, c, d, e, f]) do
       {{:pair_chain, 12}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {b, _},
-        {c, _},
-        {d, _},
-        {e, _},
-        {f, _},
-        {g, _},
-        {h, _},
-        {i, _},
-        {j, _},
-        {k, _},
-        {l, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {b, _},
+          {c, _},
+          {d, _},
+          {e, _},
+          {f, _},
+          {g, _},
+          {h, _},
+          {i, _},
+          {j, _},
+          {k, _},
+          {l, _}
+        ]
+      ) do
     # "chain" can't have "2"
     if is_chain?([a, b, c, d, e, f, g, h, i, j, k, l]) do
       {{:chain, 12}, a}
@@ -502,133 +540,145 @@ defmodule FightingTheLandlord.Poker do
   # when length is 13, nothing illegal
 
   # when the length of the cards is 14
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {g, _},
-        {g, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {g, _},
+          {g, _}
+        ]
+      ) do
     if is_chain?([a, b, c, d, e, f, g]) do
       {{:pair_chain, 14}, a}
     end
   end
 
   # when the length of the cards is 15
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane, 15}, a}
     end
   end
 
-  def category_of_hands([
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _}
-      ]) do
+  def category_of_hands(
+        [
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_pairs, 15}, a}
     end
   end
 
-  def category_of_hands([
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {f, _},
-        {f, _}
-      ]) do
+  def category_of_hands(
+        [
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {f, _},
+          {f, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_pairs, 15}, a}
     end
   end
 
-  def category_of_hands([
-        {d, _},
-        {d, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _}
-      ]) do
+  def category_of_hands(
+        [
+          {d, _},
+          {d, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_pairs, 15}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {d, _},
-        {d, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {d, _},
+          {d, _}
+        ]
+      ) do
     if a - c === 2 and a < 15 do
       {{:airplane_with_pairs, 15}, a}
     end
@@ -636,162 +686,176 @@ defmodule FightingTheLandlord.Poker do
 
   # when the length of the cards is 16
 
-  def category_of_hands([
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {_, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {_, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {_, _},
-        {d, _},
-        {d, _},
-        {d, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {_, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {_, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {_, _},
+          {d, _},
+          {d, _},
+          {d, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_solos, 16}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_solos, 16}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {_, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_solos, 16}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_solos, 16}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {_, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {_, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_solos, 16}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_solos, 16}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {g, _},
-        {g, _},
-        {h, _},
-        {h, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {g, _},
+          {g, _},
+          {h, _},
+          {h, _}
+        ]
+      ) do
     if is_chain?([a, b, c, d, e, f, g, h]) do
       {{:pair_chain, 16}, a}
     end
@@ -799,51 +863,55 @@ defmodule FightingTheLandlord.Poker do
 
   # when length is 17, only illegal cards
   # when the length of the cards is 18
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {f, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {f, _}
+        ]
+      ) do
     if a - f === 5 and a < 15 do
       {{:airplane, 18}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {g, _},
-        {g, _},
-        {h, _},
-        {h, _},
-        {i, _},
-        {i, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {g, _},
+          {g, _},
+          {h, _},
+          {h, _},
+          {i, _},
+          {i, _}
+        ]
+      ) do
     if is_chain?([a, b, c, d, e, f, g, h, i]) do
       {{:pair_chain, 18}, a}
     end
@@ -852,352 +920,378 @@ defmodule FightingTheLandlord.Poker do
   # when length is 19, only illegal cards
 
   # when the length of the cards is 20
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane_with_solos, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {_, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {_, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {_, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {_, _},
-        {e, _},
-        {e, _},
-        {e, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {_, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {_, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {_, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {_, _},
+          {e, _},
+          {e, _},
+          {e, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane_with_solos, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _},
+          {_, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane_with_solos, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane_with_solos, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _},
-        {_, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _},
+          {_, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane_with_solos, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {_, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {_, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane_with_solos, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {e, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _},
-        {_, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {e, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _},
+          {_, _}
+        ]
+      ) do
     if a - e === 4 and a < 15 do
       {{:airplane_with_solos, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {g, _},
-        {g, _},
-        {h, _},
-        {h, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _}
-      ]) do
+  def category_of_hands(
+        [
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {g, _},
+          {g, _},
+          {h, _},
+          {h, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_pairs, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {g, _},
-        {g, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {h, _},
-        {h, _}
-      ]) do
+  def category_of_hands(
+        [
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {g, _},
+          {g, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {h, _},
+          {h, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_pairs, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {h, _},
-        {h, _},
-        {g, _},
-        {g, _}
-      ]) do
+  def category_of_hands(
+        [
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {h, _},
+          {h, _},
+          {g, _},
+          {g, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_pairs, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {e, _},
-        {e, _},
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {h, _},
-        {h, _},
-        {g, _},
-        {g, _},
-        {f, _},
-        {f, _}
-      ]) do
+  def category_of_hands(
+        [
+          {e, _},
+          {e, _},
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {h, _},
+          {h, _},
+          {g, _},
+          {g, _},
+          {f, _},
+          {f, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_pairs, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {d, _},
-        {h, _},
-        {h, _},
-        {g, _},
-        {g, _},
-        {f, _},
-        {f, _},
-        {e, _},
-        {e, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {d, _},
+          {h, _},
+          {h, _},
+          {g, _},
+          {g, _},
+          {f, _},
+          {f, _},
+          {e, _},
+          {e, _}
+        ]
+      ) do
     if a - d === 3 and a < 15 do
       {{:airplane_with_pairs, 20}, a}
     end
   end
 
-  def category_of_hands([
-        {a, _},
-        {a, _},
-        {b, _},
-        {b, _},
-        {c, _},
-        {c, _},
-        {d, _},
-        {d, _},
-        {e, _},
-        {e, _},
-        {f, _},
-        {f, _},
-        {g, _},
-        {g, _},
-        {h, _},
-        {h, _},
-        {i, _},
-        {i, _},
-        {j, _},
-        {j, _}
-      ]) do
+  def category_of_hands(
+        [
+          {a, _},
+          {a, _},
+          {b, _},
+          {b, _},
+          {c, _},
+          {c, _},
+          {d, _},
+          {d, _},
+          {e, _},
+          {e, _},
+          {f, _},
+          {f, _},
+          {g, _},
+          {g, _},
+          {h, _},
+          {h, _},
+          {i, _},
+          {i, _},
+          {j, _},
+          {j, _}
+        ]
+      ) do
     if is_chain?([a, b, c, d, e, f, g, h, i, j]) do
       {{:pair_chain, 20}, a}
     end
