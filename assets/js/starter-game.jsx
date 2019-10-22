@@ -12,16 +12,24 @@ class FightingTheLandLord extends React.Component {
         this.channel = props.channel;
         this.state = {
             phase: "wait_for_players",
-            landlord: "",
-            left: { name: "Alex", points: 10, cards: 5 },
-            right: {},
+            landlord: null,
+            left: {
+                name: null,
+                points: 0,
+                cards: [],
+            },
+            right: {
+                name: null,
+                points: 0,
+                cards: [],
+            },
             self: {
-                name: "Luke",
-                points: 20,
-                cards: ["5_hearts", "6_hearts", "7_clubs", "8_hearts"],
+                name: null,
+                points: 0,
+                cards: [],
             },
             active: false,
-            previous_play: { position: "right", cards: ["9_hearts", "10_hearts"] },
+            previous_play: { position: null, cards: [] },
             selected_index: []
         };
 
@@ -31,6 +39,8 @@ class FightingTheLandLord extends React.Component {
             .receive("error", resp => { console.log("Unable to join", resp); });
 
         this.channel.on("player_joined", this.got_view.bind(this));
+        this.channel.on("player_played", this.got_view.bind(this));
+        this.channel.on("player_passed", this.got_view.bind(this));
 
     }
 
@@ -56,7 +66,7 @@ class FightingTheLandLord extends React.Component {
 
     got_view(view) {
         if (view.game !== null) {
-            this.setState(view.game);
+            this.setState(view.game, () => this.state.selected_index = []);
         }
     }
 
@@ -133,10 +143,9 @@ class FightingTheLandLord extends React.Component {
                 backImg1.onload = function () {
                     for (let i = 0; i < left_card_left; i++) {
                         ctx.drawImage(backImg1, 10, 55 + i * dy, 100, 150);
-                        console.log("draw left back" + i);
                     }
                 }
-                
+
                 ctx.fillText("Cards Left: " + left_card_left, 0, 40);
             }
             else {
@@ -154,12 +163,12 @@ class FightingTheLandLord extends React.Component {
         if (this.state.right.card !== null) {
             let right_card_left = this.state.right.cards;
             if (typeof (this.state.right.cards) === "number") {
-                backImg.onload = function() {
+                backImg.onload = function () {
                     for (let i = 0; i < right_card_left; i++) {
                         ctx.drawImage(backImg, 1350, 55 + i * dy, 100, 150);
                     }
                 }
-                
+
                 ctx.fillText("Cards Left: " + right_card_left, 1400, 40);
             }
             else {
@@ -261,11 +270,14 @@ class FightingTheLandLord extends React.Component {
         }
 
         if (cx >= 500 && cx <= 570 && cy >= 330 && cy <= 370) {
-            alert("pass");
+            this.channel.push("pass", {})
+                .receive("ok", this.got_view.bind(this));
         }
 
         if (cx >= 800 && cx <= 870 && cy >= 330 && cy <= 370) {
-            alert("paly");
+            //alert("play");
+            this.channel.push("play_cards", { card_indexes: this.state.selected_index.sort() })
+                .receive("ok", this.got_view.bind(this));
         }
 
     }
