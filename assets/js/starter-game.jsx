@@ -35,22 +35,20 @@ class FightingTheLandLord extends React.Component {
     }
 
     componentDidMount() {
-        console.log("mount");
-        if (this.state.phase === "card_play") {
-            this.refs.canvas.addEventListener("mousedown", this.onDown.bind(this), false);
-            const ctx = this.refs.canvas.getContext('2d');
-            console.log("mount1");
-            this.updateCanvas(ctx);
-        }
+
+        this.refs.canvas.addEventListener("mousedown", this.onDown.bind(this), false);
+        const ctx = this.refs.canvas.getContext('2d');
+        console.log("mount1");
+        this.updateCanvas(ctx);
+
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(prevState === this.state)
-        if (!(prevState === this.state) && this.state.phase === "card_play") {
+        if (!(prevState === this.state)) {
             console.log("updateww");
             const ctx = this.refs.canvas.getContext('2d');
             console.log("updatewweeee");
-            ctx.clearRect(0, 0, 1000, 1000);
+            ctx.clearRect(0, 0, 1500, 1000);
             this.updateCanvas(ctx);
         }
 
@@ -78,11 +76,20 @@ class FightingTheLandLord extends React.Component {
     }
 
     updateCanvas(ctx) {
-        this.drawSides(ctx);
-        this.drawLandlord(ctx);
-        this.drawPreviousPlay(ctx);
-        this.drawSelfCards(ctx);
-        this.drawButton(ctx);
+        if (this.state.phase == "card_play") {
+            this.drawSides(ctx);
+            this.drawLandlord(ctx);
+            this.drawPreviousPlay(ctx);
+            this.drawSelfCards(ctx);
+            this.drawButton(ctx);
+        }
+        else {
+            this.drawText(ctx);
+        }
+    }
+
+    drawText(ctx) {
+        ctx.fillText("Wating for player", 100, 100);
     }
 
     drawButton(ctx) {
@@ -137,29 +144,31 @@ class FightingTheLandLord extends React.Component {
     }
 
     drawPreviousPlay(ctx) {
-        let cards = this.state.previous_play.cards;
-        if (this.state.previous_play.position === "left" || this.state.previous_play.position === "right") {
+        if (this.state.previous_play.cards !== null) {
+            let cards = this.state.previous_play.cards;
+            if (this.state.previous_play.position === "left" || this.state.previous_play.position === "right") {
 
-            let self_start_x = this.state.previous_play.position === "left" ? 150 : 1150;
-            let self_start_y = 120;
-            let dx = 50;
-            let i = 0;
-            Promise.all(cards.map(x => this.loadImage(images_path[x])))
-                .then((images) => images.forEach((image, i) => {
-                    ctx.drawImage(image, self_start_x, self_start_y + i * dx);
-                    i++;
-                })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
-        }
-        if (this.state.previous_play.position === "self") {
-            let self_start_x = 600;
-            let self_start_y = 150;
-            let dx = 50;
-            let i = 0;
-            Promise.all(cards.map(x => this.loadImage(images_path[x])))
-                .then((images) => images.forEach((image, i) => {
-                    ctx.drawImage(image, self_start_x + i * dx, self_start_y);
-                    i++;
-                })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
+                let self_start_x = this.state.previous_play.position === "left" ? 150 : 1150;
+                let self_start_y = 120;
+                let dx = 50;
+                let i = 0;
+                Promise.all(cards.map(x => this.loadImage(images_path[x])))
+                    .then((images) => images.forEach((image, i) => {
+                        ctx.drawImage(image, self_start_x, self_start_y + i * dx);
+                        i++;
+                    })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
+            }
+            if (this.state.previous_play.position === "self") {
+                let self_start_x = 600;
+                let self_start_y = 150;
+                let dx = 50;
+                let i = 0;
+                Promise.all(cards.map(x => this.loadImage(images_path[x])))
+                    .then((images) => images.forEach((image, i) => {
+                        ctx.drawImage(image, self_start_x + i * dx, self_start_y);
+                        i++;
+                    })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
+            }
         }
     }
 
@@ -215,7 +224,7 @@ class FightingTheLandLord extends React.Component {
     }
 
     render() {
-        if (this.state.phase !== "card_play") {
+        /*if (this.state.phase !== "card_play") {
             return <p> Waiting For Players</p>
         }
 
@@ -225,7 +234,11 @@ class FightingTheLandLord extends React.Component {
                 </canvas>
             </div>
 
-        }
+        }*/
+        return <div>
+            <canvas id="main" ref="canvas" width="1500" height="1000">
+            </canvas>
+        </div>
     }
 
 
