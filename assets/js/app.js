@@ -21,7 +21,7 @@ import fighting_the_lanlord_init from "./starter-game"
 $(() => {
     let root = document.getElementById('root');
     if(root) {
-        let channel = socket.channel("games:" + window.gameName, {});
+        let channel = socket.channel("games:" + window.table_name, {player_name: window.user_name});
         fighting_the_lanlord_init(root, channel);
     }
 })

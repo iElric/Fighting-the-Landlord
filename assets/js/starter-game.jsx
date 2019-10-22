@@ -7,11 +7,11 @@ export default function fighting_the_landlord_init(root, channel) {
 }
 
 class FightingTheLandLord extends React.Component {
-    constructor(probs) {
-        super(probs);
-        this.channel = probs.channel;
+    constructor(props) {
+        super(props);
+        this.channel = props.channel;
         this.state = {
-            phase: "card_play",
+            phase: "wait_for_players",
             landlord: "",
             left: { name: "Alex", points: 10, cards: 5 },
             right: {},
@@ -20,17 +20,19 @@ class FightingTheLandLord extends React.Component {
                 points: 20,
                 cards: ["5_hearts", "6_hearts", "7_clubs", "8_hearts"],
             },
-            active: true,
+            active: false,
             previous_play: { position: "right", cards: ["9_hearts", "10_hearts"] },
             selected_index: []
         };
 
-        /*this.channel
+        this.channel
             .join()
             .receive("ok", this.got_view.bind(this))
             .receive("error", resp => { console.log("Unable to join", resp); });
 
-        this.channel.on("update", this.got_view.bind(this));*/
+/*
+        this.channel.on("update", this.got_view.bind(this));
+*/
     }
 
     componentDidMount() {
@@ -42,8 +44,8 @@ class FightingTheLandLord extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(prevState == this.state)
-        if (!(prevState == this.state)) {
+        console.log(prevState === this.state)
+        if (!(prevState === this.state)) {
             console.log("updateww");
             const ctx = this.refs.canvas.getContext('2d');
             console.log("updatewweeee");
@@ -60,7 +62,9 @@ class FightingTheLandLord extends React.Component {
 
 
     got_view(view) {
-        this.setState(view.game);
+        if (view.game !== null) {
+            this.setState(view.game);
+        }
     }
 
     loadImage(images_path) {
@@ -81,7 +85,7 @@ class FightingTheLandLord extends React.Component {
     }
 
     drawButton(ctx) {
-        if (this.state.active == true) {
+        if (this.state.active === true) {
             let passButton = new Image();
             let playButton = new Image();
             passButton.src = images_path["pass"];
@@ -133,9 +137,9 @@ class FightingTheLandLord extends React.Component {
 
     drawPreviousPlay(ctx) {
         let cards = this.state.previous_play.cards;
-        if (this.state.previous_play.position == "left" || this.state.previous_play.position == "right") {
+        if (this.state.previous_play.position === "left" || this.state.previous_play.position === "right") {
 
-            let self_start_x = this.state.previous_play.position == "left" ? 150 : 1150;
+            let self_start_x = this.state.previous_play.position === "left" ? 150 : 1150;
             let self_start_y = 120;
             let dx = 50;
             let i = 0;
@@ -145,7 +149,7 @@ class FightingTheLandLord extends React.Component {
                     i++;
                 })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
         }
-        if (this.state.previous_play.position == "self") {
+        if (this.state.previous_play.position === "self") {
             let self_start_x = 600;
             let self_start_y = 150;
             let dx = 50;
@@ -182,7 +186,7 @@ class FightingTheLandLord extends React.Component {
         if (cx >= self_start_x && cx <= self_start_x + 50 * (card_size + 1) && cy >= 400 && cy <= 565) {
             //alert((cx - self_start_x) / 50);
             let index = Math.floor((cx - self_start_x) / 50);
-            if (index == card_size) {
+            if (index === card_size) {
                 index = index - 1;
             }
             var new_index = Array.from(this.state.selected_index);
@@ -210,7 +214,7 @@ class FightingTheLandLord extends React.Component {
     }
 
     render() {
-        if (this.state.phase != "card_play") {
+        if (this.state.phase !== "card_play") {
             return <p> Waiting For Players</p>
         }
 
