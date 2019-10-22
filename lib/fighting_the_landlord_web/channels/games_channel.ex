@@ -5,10 +5,11 @@ defmodule FightingTheLandlordWeb.GamesChannel do
   alias FightingTheLandlord.BackupAgent
   alias FightingTheLandlord.GameServer
 
-  def join("games:" <> name, %{"player_name" => player_name}, socket) do
+  def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
       GameServer.start(name)
       game = GameServer.peek(name)
+      %{"player_name" => player_name} = payload
       {game, player_id} = GameServer.add_player(game, player_name)
       socket = socket
                |> assign(:name, name)
