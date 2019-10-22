@@ -30,9 +30,8 @@ class FightingTheLandLord extends React.Component {
             .receive("ok", this.got_view.bind(this))
             .receive("error", resp => { console.log("Unable to join", resp); });
 
-        /*
-                this.channel.on("update", this.got_view.bind(this));
-        */
+        this.channel.on("player_joined", this.got_view.bind(this));
+
     }
 
     componentDidMount() {
@@ -47,7 +46,7 @@ class FightingTheLandLord extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         console.log(prevState === this.state)
-        if (!(prevState === this.state)) {
+        if (!(prevState === this.state) && this.state.phase === "card_play") {
             console.log("updateww");
             const ctx = this.refs.canvas.getContext('2d');
             console.log("updatewweeee");
