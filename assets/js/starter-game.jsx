@@ -80,7 +80,7 @@ class FightingTheLandLord extends React.Component {
     }
 
     updateCanvas(ctx) {
-        if (this.state.phase === "card_play") {
+        if (this.state.phase == "card_play") {
             this.drawSides(ctx);
             this.drawLandlord(ctx);
             this.drawPreviousPlay(ctx);
