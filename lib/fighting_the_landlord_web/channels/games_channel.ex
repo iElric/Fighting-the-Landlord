@@ -6,13 +6,9 @@ defmodule FightingTheLandlordWeb.GamesChannel do
 
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
-      IO.inspect(name)
       GameServer.start(name)
       %{"player_name" => player_name} = payload
-      IO.inspect(player_name)
       {game, player_id} = GameServer.add_player(name, player_name)
-      IO.inspect(player_id)
-      IO.inspect(game)
       socket = socket
                |> assign(:name, name)
                |> assign(:player_id, player_id)
@@ -24,6 +20,17 @@ defmodule FightingTheLandlordWeb.GamesChannel do
       end
     else
       {:error, %{reason: "unauthorized"}}
+    end
+  end
+
+  # only the winner can start a new game
+  def handle_in("start_new_round", _payload, socket) do
+    name = socket.assigns[:name]
+    player_id = socket.assigns[:player_id]
+    game = GameServer.peek(name)
+    winner_id = Game.who_wins(game)
+    if is_nil(winner_id) do
+      {:reply, {:error, }}
     end
   end
 

@@ -19,7 +19,8 @@ defmodule FightingTheLandlord.GameServer do
 
   def start_link(name) do
     # right now just call landlord here
-    game = FightingTheLandlord.BackupAgent.get(name) || Game.new() |> Game.call_landlord()
+    game = FightingTheLandlord.BackupAgent.get(name) || Game.new()
+                                                        |> Game.call_landlord()
     GenServer.start_link(__MODULE__, game, name: reg(name))
   end
 
@@ -41,6 +42,10 @@ defmodule FightingTheLandlord.GameServer do
 
   def pass(name, player_id) do
     GenServer.call(reg(name), {:pass, name, player_id})
+  end
+
+  def start_new_round(name, winner_id) do
+    GenServer.call(reg(name), {:start_new_round, name, winner_id})
   end
 
   # server side
@@ -90,5 +95,11 @@ defmodule FightingTheLandlord.GameServer do
       BackupAgent.put(name, new_game)
       {:reply, new_game, new_game}
     end
+  end
+
+  def handle_call({:start_new_round, name, winner_id}, _from, game) do
+    game = Game.start_new_round(game, winner_id)
+    BackupAgent.put(name, game)
+    {:reply, game, game}
   end
 end
