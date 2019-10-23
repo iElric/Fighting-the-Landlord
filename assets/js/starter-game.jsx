@@ -117,7 +117,7 @@ class FightingTheLandLord extends React.Component {
                 playButton.src = images_path["play"];
                 passButton.onload = function () {
                     ctx.drawImage(passButton, 500, 700, 70, 40);
-                }
+                };
                 playButton.onload = function () {
                     ctx.drawImage(playButton, 800, 700, 70, 40);
                 }
@@ -264,7 +264,7 @@ class FightingTheLandLord extends React.Component {
             if (index === card_size) {
                 index = index - 1;
             }
-            var new_index = Array.from(this.state.selected_index);
+            let new_index = Array.from(this.state.selected_index);
             if (new_index.includes(index)) {
                 let i = new_index.indexOf(index);
                 new_index.splice(i, 1);
