@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import _ from "lodash";
 
 export default function fighting_the_landlord_init(root, channel) {
-    ReactDOM.render(<FightingTheLandLord channel={channel}/>, root);
+    ReactDOM.render(<FightingTheLandLord channel={channel} />, root);
 }
 
 class FightingTheLandLord extends React.Component {
@@ -29,7 +29,7 @@ class FightingTheLandLord extends React.Component {
                 cards: [],
             },
             active: false,
-            previous_play: {position: null, cards: []},
+            previous_play: { position: null, cards: [] },
             selected_index: [],
             message: ""
         };
@@ -154,8 +154,8 @@ class FightingTheLandLord extends React.Component {
                 }
                 i++;
             })).catch((err) => {
-            console.log("aa" + err + ";;;;;;");
-        });
+                console.log("aa" + err + ";;;;;;");
+            });
         ctx.fillText("Name: " + this.state.self.name, 500, 780);
         ctx.fillText("Score: " + this.state.self.points, 650, 780);
         if (this.state.landlord === "self") {
@@ -187,8 +187,8 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, 10, 80 + j * observer_dy);
                         j++;
                     })).catch((err) => {
-                    console.log(err);
-                });
+                        console.log(err);
+                    });
             }
         }
         ctx.fillText("Score: " + this.state.left.points, 0, 15);
@@ -213,8 +213,8 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, 1350, 80 + k * observer_dy);
                         k++;
                     })).catch((err) => {
-                    console.log(err);
-                });
+                        console.log(err);
+                    });
             }
         }
         ctx.fillText("Score: " + this.state.right.points, 1350, 15);
@@ -240,8 +240,8 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, self_start_x, self_start_y + i * dx);
                         i++;
                     })).catch((err) => {
-                    console.log("aa" + err + ";;;;;;");
-                });
+                        console.log("aa" + err + ";;;;;;");
+                    });
             }
             if (this.state.previous_play.position === "self") {
                 let self_start_x = 600;
@@ -253,8 +253,8 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, self_start_x + i * dx, self_start_y);
                         i++;
                     })).catch((err) => {
-                    console.log("aa" + err + ";;;;;;");
-                });
+                        console.log("aa" + err + ";;;;;;");
+                    });
             }
         }
     }
@@ -288,7 +288,7 @@ class FightingTheLandLord extends React.Component {
             } else {
                 new_index.push(index);
             }
-            let state1 = _.assign({}, this.state, {selected_index: new_index});
+            let state1 = _.assign({}, this.state, { selected_index: new_index });
             this.setState(state1, () => console.log(this.state.selected_index));
 
         }
@@ -305,7 +305,7 @@ class FightingTheLandLord extends React.Component {
                 this.state.selected_index.sort((a, b) => {
                     return a - b
                 });
-                this.channel.push("play_cards", {card_indexes: this.state.selected_index})
+                this.channel.push("play_cards", { card_indexes: this.state.selected_index })
                     .receive("ok", this.got_view.bind(this));
 
                 this.channel.push("who_wins", {}).receive("ok", this.get_winner.bind(this));
@@ -320,10 +320,11 @@ class FightingTheLandLord extends React.Component {
     }
 
     sendText() {
-        this.channel.push("new_msg", {body: document.getElementById("textInput").value});
+        this.channel.push("new_msg", { body: window.user_name + ": " + document.getElementById("textInput").value });
     }
 
     updateChatRoom() {
+        document.getElementById("textInput").value = "";
         document.getElementById("chatBoard").value = this.state.message;
     }
 
@@ -331,30 +332,41 @@ class FightingTheLandLord extends React.Component {
         return (<div>
             <canvas id="main" ref="canvas" width="1500" height="1000">
             </canvas>
-            <ChatBoard/>
-            <TextInput/>
-            <SendButton onSendClick = {()=>this.sendText()}/>
+            <ChatBoard phase={this.state.phase} />
+            <TextInput phase={this.state.phase} />
+            <SendButton phase={this.state.phase} onSendClick={() => this.sendText()} />
         </div>)
     }
 }
 
 function ChatBoard(props) {
-    return (<div className="textClass">
-        <textarea id="chatBoard" readOnly></textarea>
-    </div>)
+    let { phase } = props;
+    if (phase !== "waiting_for_players") {
+        return (<div className="textClass">
+            <textarea id="chatBoard" readOnly></textarea>
+        </div>)
+    }
+    return null;
 }
 
 
 function SendButton(props) {
-    let {onSendClick} = props;
-    return (<div className="userInput">
-        <p>
-            <button id="sendButton" onClick={onSendClick}>Send</button>
-        </p>
-    </div>)
+    let { phase, onSendClick } = props;
+    if (phase !== "waiting_for_players") {
+        return (<div className="userInput">
+            <p>
+                <button id="sendButton" onClick={onSendClick}>Send</button>
+            </p>
+        </div>)
+    }
+    return null;
 
 }
 
-function TextInput() {
-    return (<p><input id="textInput" size="45"></input></p>)
+function TextInput(props) {
+    let { phase } = props;
+    if (phase !== "waiting_for_players") {
+        return (<p><input id="textInput" size="45"></input></p>)
+    }
+    return null;
 }

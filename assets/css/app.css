@@ -54,7 +54,7 @@
     bottom: 10px;
 }
 
-#text {
+#chatBoard {
     width: 500px;
     height: 200px;
     position: absolute;
@@ -63,8 +63,14 @@
     padding: 10px;
 }
 
-.userInput {
+#sendButton {
     position: absolute;
-    right: 30px;
-    top: 900px;
+    right: 500px;
+    top: 350px;
+}
+
+#textInput {
+    position: absolute;
+    right: 600px;
+    top: 350px;
 }
