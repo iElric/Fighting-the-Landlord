@@ -29,8 +29,14 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     player_id = socket.assigns[:player_id]
     game = GameServer.peek(name)
     winner_id = Game.who_wins(game)
-    if is_nil(winner_id) do
-      {:reply, {:error, }}
+    if is_nil(winner_id) or winner_id !== player_id do
+      # if no winner or the caller is not the winner, return old game state
+      # no need to broadcast
+      {:reply, {:ok, %{"game" => Game.player_view(game, player_id)}}, socket}
+    else
+      game = GameServer.start_new_round(name, winner_id)
+      broadcast!(socket, "new_round", game)
+      {:reply, {:ok, %{"game" => Game.player_view(game, player_id)}}, socket}
     end
   end
 
@@ -50,6 +56,18 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     {:reply, {:ok, %{"game" => Game.player_view(game, player_id)}}, socket}
   end
 
+  def handle_in("who_wins", _payload, socket) do
+    name = socket.assigns[:name]
+    player_id = socket.assigns[:player_id]
+    game = GameServer.peek(name)
+    winner_id = Game.who_wins(game)
+    if is_nil(winner_id) do
+      {:reply, {:ok, %{"winner" => false}}, socket}
+    else
+      {:reply, {:ok, %{"winner" => true}}, socket}
+    end
+  end
+
   def handle_info(:after_join, socket) do
     name = socket.assigns[:name]
     game = GameServer.peek(name)
@@ -57,7 +75,7 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     {:noreply, socket}
   end
 
-  intercept ["player_joined", "player_played", "player_passed"]
+  intercept ["player_joined", "player_played", "player_passed", "new_round"]
 
   def handle_out("player_joined", game, socket) do
     player_id = socket.assigns[:player_id]
@@ -76,6 +94,12 @@ defmodule FightingTheLandlordWeb.GamesChannel do
   end
 
   def handle_out("player_passed", game, socket) do
+    player_id = socket.assigns[:player_id]
+    push(socket, "player_passed", %{"game" => Game.player_view(game, player_id)})
+    {:noreply, socket}
+  end
+
+  def handle_out("new_round", game, socket) do
     player_id = socket.assigns[:player_id]
     push(socket, "player_passed", %{"game" => Game.player_view(game, player_id)})
     {:noreply, socket}
