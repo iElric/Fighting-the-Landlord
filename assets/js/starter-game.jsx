@@ -48,6 +48,8 @@ class FightingTheLandLord extends React.Component {
 
         this.refs.canvas.addEventListener("mousedown", this.onDown.bind(this), false);
         const ctx = this.refs.canvas.getContext('2d');
+        ctx.font = "20px Comic Sans MS";
+
         console.log("mount1");
         this.updateCanvas(ctx);
 
@@ -57,7 +59,7 @@ class FightingTheLandLord extends React.Component {
         if (!(prevState === this.state)) {
             console.log("updateww");
             const ctx = this.refs.canvas.getContext('2d');
-            console.log("updatewweeee");
+            ctx.font = "20px Comic Sans MS";
             ctx.clearRect(0, 0, 1500, 1000);
             this.updateCanvas(ctx);
         }
@@ -67,6 +69,15 @@ class FightingTheLandLord extends React.Component {
     got_view(view) {
         if (view.game !== null) {
             this.setState(view.game, () => this.state.selected_index = []);
+        }
+    }
+
+    get_winner(res) {
+        console.log(res);
+        if (res.winner) {
+            const ctx = this.refs.canvas.getContext('2d');
+            ctx.clearRect(0, 0, 1500, 1000);
+            this.drawRestartButton(ctx);
         }
     }
 
@@ -80,7 +91,7 @@ class FightingTheLandLord extends React.Component {
     }
 
     updateCanvas(ctx) {
-        if (this.state.phase == "card_play") {
+        if (this.state.phase === "card_play") {
             this.drawSides(ctx);
             this.drawLandlord(ctx);
             this.drawPreviousPlay(ctx);
@@ -103,8 +114,10 @@ class FightingTheLandLord extends React.Component {
             passButton.src = images_path["pass"];
             playButton.src = images_path["play"];
             passButton.onload = function () {
-                ctx.drawImage(passButton, 500, 330, 70, 40);
-                ctx.drawImage(playButton, 800, 330, 70, 40);
+                ctx.drawImage(passButton, 500, 700, 70, 40);
+            }
+            playButton.onload = function () {
+                ctx.drawImage(playButton, 800, 700, 70, 40);
             }
         }
     }
@@ -112,7 +125,7 @@ class FightingTheLandLord extends React.Component {
     drawSelfCards(ctx) {
         let self_cards = this.state.self.cards;
         let self_start_x = 650 - self_cards.length / 2 * 50;
-        let self_start_y = 400;
+        let self_start_y = 800;
         let dx = 50;
         let i = 0;
         Promise.all(self_cards.map(x => this.loadImage(images_path[x])))
@@ -125,8 +138,8 @@ class FightingTheLandLord extends React.Component {
                 }
                 i++;
             })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
-        ctx.fillText(this.state.self.name, 650, 350);
-        ctx.fillText(this.state.self.points, 680, 350);
+        ctx.fillText("Name: " + this.state.self.name, 500, 780);
+        ctx.fillText("Score: " + this.state.self.points, 650, 780);
     }
 
     drawSides(ctx) {
@@ -142,22 +155,20 @@ class FightingTheLandLord extends React.Component {
             if (typeof (this.state.left.cards) === "number") {
                 backImg1.onload = function () {
                     for (let i = 0; i < left_card_left; i++) {
-                        ctx.drawImage(backImg1, 10, 55 + i * dy, 100, 150);
+                        ctx.drawImage(backImg1, 10, 80 + i * dy, 100, 150);
                     }
                 }
-
-                ctx.fillText("Cards Left: " + left_card_left, 0, 40);
             }
             else {
                 Promise.all(left_card_left.map(x => this.loadImage(images_path[x])))
                     .then((images) => images.forEach((image, j) => {
-                        ctx.drawImage(image, 10, 55 + j * observer_dy);
+                        ctx.drawImage(image, 10, 80 + j * observer_dy);
                         j++;
                     })).catch((err) => { console.log(err); });
             }
         }
-        ctx.fillText("Score: " + this.state.left.points, 0, 10);
-        ctx.fillText("Name: " + this.state.left.name, 0, 25);
+        ctx.fillText("Score: " + this.state.left.points, 0, 15);
+        ctx.fillText("Name: " + this.state.left.name, 0, 40);
 
 
         if (this.state.right.card !== null) {
@@ -165,38 +176,20 @@ class FightingTheLandLord extends React.Component {
             if (typeof (this.state.right.cards) === "number") {
                 backImg.onload = function () {
                     for (let i = 0; i < right_card_left; i++) {
-                        ctx.drawImage(backImg, 1350, 55 + i * dy, 100, 150);
+                        ctx.drawImage(backImg, 1350, 80 + i * dy, 100, 150);
                     }
                 }
-
-                ctx.fillText("Cards Left: " + right_card_left, 1400, 40);
             }
             else {
                 Promise.all(right_card_left.map(x => this.loadImage(images_path[x])))
                     .then((images) => images.forEach((image, k) => {
-                        ctx.drawImage(image, 1350, 55 + k * observer_dy);
+                        ctx.drawImage(image, 1350, 80 + k * observer_dy);
                         k++;
                     })).catch((err) => { console.log(err); });
             }
         }
-        ctx.fillText("Score: " + this.state.left.points, 1400, 10);
-        ctx.fillText("Name: " + this.state.left.name, 1400, 25);
-
-
-        /*let left_card_left = this.state.left.cards;
-        let right_card_left = this.state.left.cards;
-        let backImg = new Image();
-        backImg.src = images_path["back"];
-        ctx.fillText("Score: " + this.state.left.score, 0, 10);
-        ctx.fillText("Name: " + this.state.left.name, 0, 20);
-        ctx.fillText("Cards Left: " + left_card_left, 0, 40);
-        ctx.fillText("Score: " + this.state.right.score, 1300, 10);
-        ctx.fillText(this.state.right.name, 1300, 20);
-        ctx.fillText("Cards Left: " + right_card_left, 1300, 30);
-        backImg.onload = function () {
-            ctx.drawImage(backImg, 0, 50, 100, 150);
-            ctx.drawImage(backImg, 1300, 50, 100, 150);
-        }*/
+        ctx.fillText("Score: " + this.state.right.points, 1350, 15);
+        ctx.fillText("Name: " + this.state.right.name, 1350, 40);
     }
 
     drawPreviousPlay(ctx) {
@@ -216,7 +209,7 @@ class FightingTheLandLord extends React.Component {
             }
             if (this.state.previous_play.position === "self") {
                 let self_start_x = 600;
-                let self_start_y = 150;
+                let self_start_y = 320;
                 let dx = 50;
                 let i = 0;
                 Promise.all(cards.map(x => this.loadImage(images_path[x])))
@@ -231,16 +224,25 @@ class FightingTheLandLord extends React.Component {
     drawLandlord(ctx) {
         switch (this.state.landlord) {
             case "left":
-                ctx.fillText("landlord", 120, 250);
+                ctx.fillText("landlord", 10, 65);
                 break;
             case "right":
-                ctx.fillText("landlord", 950, 250);
+                ctx.fillText("landlord", 1350, 65);
                 break;
             case "self":
-                ctx.fillText("landlord", 650, 380);
+                ctx.fillText("landlord", 800, 580);
                 break;
         }
 
+    }
+
+    drawRestartButton(ctx) {
+        ctx.clearRect(0, 0, 1500, 1000);
+        let restartImg = new Image();
+        restartImg.src = images_path["restart"];
+        restartImg.onload = function () {
+            ctx.drawImage(restartImg, 800, 800, 200, 200);
+        };
     }
 
 
@@ -249,8 +251,8 @@ class FightingTheLandLord extends React.Component {
         let card_size = this.state.self.cards.length;
         let cx = event.pageX;
         let cy = event.pageY;
-        if (cx >= self_start_x && cx <= self_start_x + 50 * (card_size + 1) && cy >= 400 && cy <= 565) {
-            //alert((cx - self_start_x) / 50);
+        console.log(cx, cy);
+        if (cx >= self_start_x && cx <= self_start_x + 50 * (card_size + 1) && cy >= 800 && cy <= 965) {
             let index = Math.floor((cx - self_start_x) / 50);
             if (index === card_size) {
                 index = index - 1;
@@ -263,42 +265,49 @@ class FightingTheLandLord extends React.Component {
             else {
                 new_index.push(index);
             }
-            //console.log(new_index);
             let state1 = _.assign({}, this.state, { selected_index: new_index });
             this.setState(state1, () => console.log(this.state.selected_index));
 
         }
 
-        if (cx >= 500 && cx <= 570 && cy >= 330 && cy <= 370) {
-            this.channel.push("pass", {})
-                .receive("ok", this.got_view.bind(this));
+        if (cx >= 510 && cx <= 570 && cy >= 700 && cy <= 740) {
+            if (this.state.active) {
+                this.channel.push("pass", {})
+                    .receive("ok", this.got_view.bind(this));
+            }
         }
 
-        if (cx >= 800 && cx <= 870 && cy >= 330 && cy <= 370) {
-            //alert("play");
-            this.channel.push("play_cards", { card_indexes: this.state.selected_index.sort() })
-                .receive("ok", this.got_view.bind(this));
-        }
+        if (cx >= 800 && cx <= 870 && cy >= 720 && cy <= 757) {
+            if (this.state.active) {
+                this.state.selected_index.sort((a, b) => { return a - b });
+                this.channel.push("play_cards", { card_indexes: this.state.selected_index })
+                    .receive("ok", this.got_view.bind(this));
 
+                this.channel.push("who_wins", {}).receive("ok", this.get_winner.bind(this));
+            }
+        }
+    }
+
+    chatButton(selfName) {
+        let message = document.getElementById(this.state.self.name + "input");
+        console.log(this.state.self.name + message);
     }
 
     render() {
-        /*if (this.state.phase !== "card_play") {
-            return <p> Waiting For Players</p>
-        }
-
-        else {
-            return <div>
-                <canvas id="main" ref="canvas" width="1500" height="1000">
-                </canvas>
-            </div>
-
-        }*/
+        let selfInput = this.state.self.name + "input";
+        let selfButton = this.state.self.name + "button";
+        let selfName = this.state.self.name;
         return <div>
             <canvas id="main" ref="canvas" width="1500" height="1000">
             </canvas>
+            {textInput(selfInput)}
+            <p><button id={selfButton} onClick={() => this.chatButton(selfName)}>Send</button></p>
         </div>
     }
 
 
+}
+
+function textInput(selfInput) {
+    return <p><input id={selfInput}></input></p>
 }

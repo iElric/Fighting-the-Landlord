@@ -6,9 +6,12 @@
   }
 </script>
 
+<div id="primary">
 
-<div>
-<p> Table Name: <input type= "text" id="table_name"> </p>
-<p> User Name: <input type="text" id="user_name"></p>
+<div id="title">Join A Fight Landlord Game</div>
+<div id="index_div">
+<p class="info"> Table Name: <input type= "text" id="table_name"> </p>
+<p class="info"> User Name:  <input type="text" id="user_name"></p>
 <p><button id="submit" onClick= jump()>Join A Table</button></p>
+</div>
 </div>

@@ -214,14 +214,18 @@ defmodule FightingTheLandlord.Game do
   Return winner id if the winner exist, return nil otherwise
   """
   def who_wins(%{phase: :card_play, hands: game_hands}) do
+    IO.inspect(game_hands)
     winner =
       game_hands
       |> Enum.with_index()
       |> Enum.filter(fn {hand, _} -> length(hand) === 0 end)
-    if is_nil(winner) do
+      IO.inspect(winner)
+    if winner === [] do
+      IO.inspect("this is nil")
       nil
     else
       [{_, winner_id}] = winner
+      IO.inspect(winner_id)
       winner_id
     end
   end

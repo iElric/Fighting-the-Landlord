@@ -1,4 +1,53 @@
 /* This file is for your main application css. */
 
+
 /*@import "./phoenix.css";*/
 
+.info {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 20px;
+}
+
+#primary {
+    margin: auto;
+    padding: 10px;
+}
+
+#title {
+    background-color: blueviolet;
+    font-size: 30px;
+    width: 706px;
+    text-align: center;
+    position: relative;
+}
+
+#index_div {
+    width: 600px;
+    border-style: solid;
+    padding: 50px;
+    border-block-start-width: 2px;
+    align-items: center;
+    justify-content: center;
+    border-color: blueviolet;
+    border-start-start-radius: 2px;
+}
+
+#table_name {
+    height: 40px;
+    font-size: 20px;
+}
+
+#user_name {
+    height: 40px;
+    font-size: 20px;
+}
+
+#submit {
+    background-color: blueviolet;
+    font-size: 20px;
+    border-radius: 12px;
+    width: 120px;
+    height: 80px;
+    right: 100px;
+    bottom: 10px;
+}
