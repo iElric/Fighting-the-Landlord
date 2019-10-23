@@ -30,7 +30,8 @@ class FightingTheLandLord extends React.Component {
             },
             active: false,
             previous_play: { position: null, cards: [] },
-            selected_index: []
+            selected_index: [],
+            message: "message"
         };
 
         this.channel
@@ -57,6 +58,13 @@ class FightingTheLandLord extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        if (!(prevState.message === this.state.message) && this.state.landlord !== null) {
+            console.log(prevState.message);
+            console.log(this.message);
+            console.log(prevState.message === this.message);
+            this.updateChatRoom();
+            return;
+        }
         if (!(prevState === this.state)) {
             console.log("updateww");
             const ctx = this.refs.canvas.getContext('2d');
@@ -64,6 +72,7 @@ class FightingTheLandLord extends React.Component {
             ctx.clearRect(0, 0, 1500, 1000);
             this.updateCanvas(ctx);
         }
+
     }
 
 
@@ -94,7 +103,6 @@ class FightingTheLandLord extends React.Component {
     updateCanvas(ctx) {
         if (this.state.phase === "card_play") {
             this.drawSides(ctx);
-            this.drawLandlord(ctx);
             this.drawPreviousPlay(ctx);
             this.drawSelfCards(ctx);
             this.drawButton(ctx);
@@ -105,7 +113,9 @@ class FightingTheLandLord extends React.Component {
     }
 
     drawText(ctx) {
-        ctx.fillText("Wating for player", 100, 100);
+        ctx.font = "30px Comic Sans MS";
+        let message = "Waiting for players to join, game will start when more than 2 people join this table";
+        ctx.fillText(message, 100, 100);
     }
 
     drawButton(ctx) {
@@ -146,6 +156,12 @@ class FightingTheLandLord extends React.Component {
             })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
         ctx.fillText("Name: " + this.state.self.name, 500, 780);
         ctx.fillText("Score: " + this.state.self.points, 650, 780);
+        if (this.state.landlord === "self") {
+            ctx.fillText("landlord", 800, 780);
+        }
+        else {
+            ctx.fillText("peasant", 800, 780);
+        }
     }
 
     drawSides(ctx) {
@@ -175,7 +191,12 @@ class FightingTheLandLord extends React.Component {
         }
         ctx.fillText("Score: " + this.state.left.points, 0, 15);
         ctx.fillText("Name: " + this.state.left.name, 0, 40);
-
+        if (this.state.landlord === "left") {
+            ctx.fillText("landlord", 10, 65);
+        }
+        else {
+            ctx.fillText("peasant", 10, 65);
+        }
 
         if (this.state.right.card !== null) {
             let right_card_left = this.state.right.cards;
@@ -196,6 +217,12 @@ class FightingTheLandLord extends React.Component {
         }
         ctx.fillText("Score: " + this.state.right.points, 1350, 15);
         ctx.fillText("Name: " + this.state.right.name, 1350, 40);
+        if (this.state.landlord === "right") {
+            ctx.fillText("landlord", 1350, 65);
+        }
+        else {
+            ctx.fillText("peasant", 1350, 65);
+        }
     }
 
     drawPreviousPlay(ctx) {
@@ -225,21 +252,6 @@ class FightingTheLandLord extends React.Component {
                     })).catch((err) => { console.log("aa" + err + ";;;;;;"); });
             }
         }
-    }
-
-    drawLandlord(ctx) {
-        switch (this.state.landlord) {
-            case "left":
-                ctx.fillText("landlord", 10, 65);
-                break;
-            case "right":
-                ctx.fillText("landlord", 1350, 65);
-                break;
-            case "self":
-                ctx.fillText("landlord", 800, 780);
-                break;
-        }
-
     }
 
     drawRestartButton(ctx) {
@@ -277,14 +289,14 @@ class FightingTheLandLord extends React.Component {
 
         }
 
-        if (cx >= 510 && cx <= 570 && cy >= 700 && cy <= 740) {
+        if (cx >= 500 && cx <= 580 && cy >= 700 && cy <= 760) {
             if (this.state.active && this.state.self.cards.length !== 0) {
                 this.channel.push("pass", {})
                     .receive("ok", this.got_view.bind(this));
             }
         }
 
-        if (cx >= 800 && cx <= 870 && cy >= 720 && cy <= 757) {
+        if (cx >= 800 && cx <= 875 && cy >= 720 && cy <= 760) {
             if (this.state.active && this.state.self.cards.length !== 0) {
                 this.state.selected_index.sort((a, b) => { return a - b });
                 this.channel.push("play_cards", { card_indexes: this.state.selected_index })
@@ -294,7 +306,7 @@ class FightingTheLandLord extends React.Component {
             }
         }
 
-        if (cx >= 600 && cx <= 680 && cy >=700 && cy <= 757) {
+        if (cx >= 600 && cx <= 680 && cy >= 700 && cy <= 757) {
             if (this.state.self.cards.length === 0) {
                 this.channel.push("start_new_round", {}).receive("ok", this.got_view.bind(this));
             }
@@ -302,25 +314,46 @@ class FightingTheLandLord extends React.Component {
     }
 
     chatButton(selfName) {
-        let message = document.getElementById(this.state.self.name + "input");
-        console.log(this.state.self.name + message);
+        let message = this.state.message + this.state.self.name + ":" + document.getElementById(this.state.self.name + "input").value;
+        console.log(this.state.self.name + "input");
+        console.log(document.getElementById(this.state.self.name + "input").value);
+        let state1 = _.assign({}, this.state, { message: message });
+        this.setState(state1);
+    }
+
+    updateChatRoom() {
+        document.getElementById("text").value = this.state.message;
     }
 
     render() {
         let selfInput = this.state.self.name + "input";
         let selfButton = this.state.self.name + "button";
         let selfName = this.state.self.name;
-        return <div>
-            <canvas id="main" ref="canvas" width="1500" height="1000">
-            </canvas>
-            {textInput(selfInput)}
-            <p><button id={selfButton} onClick={() => this.chatButton(selfName)}>Send</button></p>
-        </div>
+        return (<div><canvas id="main" ref="canvas" width="1500" height="1000">
+        </canvas>
+            <ChatBoard/>
+            <TextInput/>
+            <SendButton/>
+        </div>)
     }
 
 
 }
 
-function textInput(selfInput) {
-    return <p><input id={selfInput}></input></p>
+function ChatBoard() {
+    return (<div className="textClass">
+        <textarea id="text" readOnly></textarea>
+    </div>)
+}
+
+
+function SendButton(props) {
+    return (<div className="userInput">
+        <p><button id={selfButton} onClick={() => this.chatButton(selfName)}>Send</button></p>
+    </div>)
+    
+}
+
+function TextInput() {
+    return (<p><input id={selfInput} size="45"></input></p>)
 }
