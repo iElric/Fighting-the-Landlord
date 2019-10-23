@@ -9,8 +9,8 @@ Restart=on-failure
 Environment=MIX_ENV=prod "PORT=4793"
 Environment=LANG=en_US.UTF-8
 
-WorkingDirectory=/home/doudizhu/doudizhu
-ExecStart=bash /home/doudizhu/doudizhu/start.sh
+WorkingDirectory=/home/doudizhu/fighting_the_landlord
+ExecStart=bash /home/doudizhu/fighting_the_landlord/start.sh
 
 [Install]
 WantedBy=multi-user.target

@@ -68,6 +68,11 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     end
   end
 
+  def handle_in("new_msg", %{"body" => body}, socket) do
+    broadcast!(socket, "new_msg", %{body: body})
+    {:noreply, socket}
+  end
+
   def handle_info(:after_join, socket) do
     name = socket.assigns[:name]
     game = GameServer.peek(name)

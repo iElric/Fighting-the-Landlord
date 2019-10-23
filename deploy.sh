@@ -24,5 +24,5 @@ mix release
 
 echo "Starting app..."
 
-_build/prod/rel/doudizhu/bin/doudizhu start
+_build/prod/rel/fighting_the_landlord/bin/fighting_the_landlord start
 
