@@ -24,3 +24,4 @@ config :fighting_the_landlord, FightingTheLandlordWeb.Endpoint,
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
+config :fighting_the_landlord, FightingTheLandlordWeb.Endpoint, server: true
