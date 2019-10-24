@@ -127,10 +127,10 @@ class FightingTheLandLord extends React.Component {
                 passButton.src = images_path["pass"];
                 playButton.src = images_path["play"];
                 passButton.onload = function () {
-                    ctx.drawImage(passButton, 500, 700, 70, 40);
+                    ctx.drawImage(passButton, 500, 600, 70, 40);
                 };
                 playButton.onload = function () {
-                    ctx.drawImage(playButton, 800, 700, 70, 40);
+                    ctx.drawImage(playButton, 800, 600, 70, 40);
                 }
             } else {
                 this.drawRestartButton(ctx);
@@ -141,7 +141,7 @@ class FightingTheLandLord extends React.Component {
     drawSelfCards(ctx) {
         let self_cards = this.state.self.cards;
         let self_start_x = 650 - self_cards.length / 2 * 50;
-        let self_start_y = 800;
+        let self_start_y = 700;
         let dx = 50;
         let i = 0;
         Promise.all(self_cards.map(x => this.loadImage(images_path[x])))
@@ -155,12 +155,12 @@ class FightingTheLandLord extends React.Component {
             })).catch((err) => {
                 console.log("aa" + err + ";;;;;;");
             });
-        ctx.fillText("Name: " + this.state.self.name, 500, 780);
-        ctx.fillText("Score: " + this.state.self.points, 650, 780);
+        ctx.fillText("Name: " + this.state.self.name, 500, 680);
+        ctx.fillText("Score: " + this.state.self.points, 650, 680);
         if (this.state.landlord === "self") {
-            ctx.fillText("landlord", 800, 780);
+            ctx.fillText("landlord", 800, 680);
         } else {
-            ctx.fillText("peasant", 800, 780);
+            ctx.fillText("peasant", 800, 680);
         }
     }
 
@@ -244,7 +244,7 @@ class FightingTheLandLord extends React.Component {
             }
             if (this.state.previous_play.position === "self") {
                 let self_start_x = 600;
-                let self_start_y = 520;
+                let self_start_y = 420;
                 let dx = 50;
                 let i = 0;
                 Promise.all(cards.map(x => this.loadImage(images_path[x])))
@@ -264,7 +264,7 @@ class FightingTheLandLord extends React.Component {
         restartImg.src = images_path["restart"];
         console.log("draw restart");
         restartImg.onload = function () {
-            ctx.drawImage(restartImg, 600, 700, 70, 40);
+            ctx.drawImage(restartImg, 600, 600, 70, 40);
         };
     }
 
@@ -275,7 +275,7 @@ class FightingTheLandLord extends React.Component {
         let cx = event.pageX;
         let cy = event.pageY;
         console.log(cx, cy);
-        if (cx >= self_start_x && cx <= self_start_x + 50 * (card_size + 1) && cy >= 800 && cy <= 965) {
+        if (cx >= self_start_x && cx <= self_start_x + 50 * (card_size + 1) && cy >= 700 && cy <= 865) {
             let index = Math.floor((cx - self_start_x) / 50);
             if (index === card_size) {
                 index = index - 1;
@@ -292,14 +292,14 @@ class FightingTheLandLord extends React.Component {
 
         }
 
-        if (cx >= 500 && cx <= 580 && cy >= 700 && cy <= 760) {
+        if (cx >= 500 && cx <= 580 && cy >= 600 && cy <= 660) {
             if (this.state.active && this.state.self.cards.length !== 0) {
                 this.channel.push("pass", {})
                     .receive("ok", this.got_view.bind(this));
             }
         }
 
-        if (cx >= 800 && cx <= 875 && cy >= 720 && cy <= 760) {
+        if (cx >= 800 && cx <= 875 && cy >= 620 && cy <= 660) {
             if (this.state.active && this.state.self.cards.length !== 0) {
                 this.state.selected_index.sort((a, b) => {
                     return a - b
