@@ -10,8 +10,12 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :fighting_the_landlord, FightingTheLandlordWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+       server: true,
+       root: ".",
+       version: Application.spec(:phoenix_distillery, :vsn),
+       http: [:inet6, port: {:system, "PORT"}],
+       url: [host: "doudizhu.lilydevelop.com", port: 80],
+       cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
 config :logger, level: :info

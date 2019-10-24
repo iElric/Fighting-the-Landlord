@@ -3,7 +3,7 @@ server {
     listen [::]:80;
 
     # TODO: This should be your server name.
-    server_name doudizhu.ielric.com;
+    server_name doudizhu.lilydevelop.com;
 
     location / {
         proxy_pass http://localhost:4793;
