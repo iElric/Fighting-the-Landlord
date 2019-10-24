@@ -311,7 +311,7 @@ class FightingTheLandLord extends React.Component {
             }
         }
 
-        if (cx >= 600 && cx <= 680 && cy >= 700 && cy <= 757) {
+        if (cx >= 600 && cx <= 680 && cy >= 600 && cy <= 657) {
             if (this.state.self.cards.length === 0) {
                 this.channel.push("start_new_round", {}).receive("ok", this.got_view.bind(this));
             }
