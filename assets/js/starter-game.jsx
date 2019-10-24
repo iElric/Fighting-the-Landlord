@@ -57,7 +57,6 @@ class FightingTheLandLord extends React.Component {
         this.refs.canvas.addEventListener("mousedown", this.onDown.bind(this), false);
         const ctx = this.refs.canvas.getContext('2d');
         ctx.font = "20px Comic Sans MS";
-
         console.log("mount1");
         this.updateCanvas(ctx);
 
@@ -116,7 +115,7 @@ class FightingTheLandLord extends React.Component {
 
     drawText(ctx) {
         ctx.font = "30px Comic Sans MS";
-        let message = "Waiting for players to join, game will start when more than 2 people join this table";
+        let message = "Waiting for players to join, game will start when more than 2 people join this table...";
         ctx.fillText(message, 100, 100);
     }
 
@@ -194,9 +193,9 @@ class FightingTheLandLord extends React.Component {
         ctx.fillText("Score: " + this.state.left.points, 0, 15);
         ctx.fillText("Name: " + this.state.left.name, 0, 40);
         if (this.state.landlord === "left") {
-            ctx.fillText("landlord", 10, 65);
+            ctx.fillText("landlord", 0, 65);
         } else {
-            ctx.fillText("peasant", 10, 65);
+            ctx.fillText("peasant", 0, 65);
         }
 
         if (this.state.right.card !== null) {
@@ -366,7 +365,7 @@ function SendButton(props) {
 function TextInput(props) {
     let { phase } = props;
     if (phase !== "waiting_for_players") {
-        return (<p><input id="textInput" size="45"></input></p>)
+        return (<p><input id="textInput" size="35"></input></p>)
     }
     return null;
 }
