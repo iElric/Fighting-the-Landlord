@@ -369,6 +369,7 @@ The player can pass if:
 1. This is not the first turn of this game which means landlord can’t pass his or her first turn (and he or she has no reason to do so either).
 2. The previous played player is not this player. When other two passed this player’s cards, then it’s his privilege to play any category of legal cards.
 
+Play and pass can only be conducted when the current player id is the same as the id stord in whose turn. This has been enforced in code.
 Let's say there are 3 players a, b and c.  A is the landlord of this game. The first situation is when a game just started, a has to play first, he or she cannot pass that time. The cards she or he played are limited by category checking and value comparing rules of this game. The second situation is that, for instance, when b played some cards, then player c and player a both passed. when it’s player b's turn, he or she cannot pass but can play any legal cards. 
 
 When a player played or passed in his turn, we will update the `whose_turn` in game state by `(current_player_id + 1) % 3`
