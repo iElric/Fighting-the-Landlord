@@ -43,6 +43,7 @@ class FightingTheLandLord extends React.Component {
             });
 
         this.channel.on("player_joined", this.got_view.bind(this));
+        this.channel.on("landlord_called", this.got_view.bind(this));
         this.channel.on("player_played", this.got_view.bind(this));
         this.channel.on("player_passed", this.got_view.bind(this));
         this.channel.on("landlord_passed", this.got_view.bind(this));
@@ -74,7 +75,6 @@ class FightingTheLandLord extends React.Component {
         }
 
     }
-
 
     got_view(view) {
         if (view.game !== null) {
@@ -116,7 +116,7 @@ class FightingTheLandLord extends React.Component {
             this.drawPreviousPlay(ctx);
             this.drawSelfCards(ctx);
             this.drawButton(ctx);
-        } 
+        }
         else {
             this.drawText(ctx);
         }
@@ -129,13 +129,42 @@ class FightingTheLandLord extends React.Component {
     }
 
     drawCardsLeft(ctx) {
-        let backImg = new Image();
-        backImg.src = images_path["back"];
-        backImg.onload = function () {
-            ctx.drawImage(backImg, 530, 100, 100, 150);
-            ctx.drawImage(backImg, 640, 100, 100, 150);
-            ctx.drawImage(backImg, 750, 100, 100, 150);
-        };
+        if (typeof (this.state.left.cards) === "number") {
+            let backImg = new Image();
+
+            backImg.src = images_path["back"];
+            backImg.onload = function () {
+                ctx.drawImage(backImg, 530, 100, 100, 150);
+                ctx.drawImage(backImg, 640, 100, 100, 150);
+                ctx.drawImage(backImg, 750, 100, 100, 150);
+            };
+        }
+        else {
+            let leftover_cards = this.state.left_over_cards;
+            let dx = 110;
+            let i = 0;
+            Promise.all(leftover_cards.map(x => this.loadImage(images_path[x])))
+                .then((images) => images.forEach((image, i) => {
+                    ctx.drawImage(image, 530 + i * dx, 100);
+                    i++;
+                })).catch((err) => {
+                    console.log("aa" + err + ";;;;;;");
+                });
+
+        }
+    }
+
+    drawCardsLeftForEveryOne(ctx) {
+        let leftover_cards = this.state.left_over_cards;
+        let dx = 110;
+        let i = 0;
+        Promise.all(leftover_cards.map(x => this.loadImage(images_path[x])))
+            .then((images) => images.forEach((image, i) => {
+                ctx.drawImage(image, 530 + i * dx, 100);
+                i++;
+            })).catch((err) => {
+                console.log("aa" + err + ";;;;;;");
+            });
     }
 
     drawCallLandordButton(ctx) {
@@ -355,7 +384,11 @@ class FightingTheLandLord extends React.Component {
             }
 
             if (this.state.active && this.state.phase === "call_landlord") {
-                alert("call landlord");
+                this.channel.push("show_left_over", {});
+                window.setTimeout(() => {
+                    this.channel.push("call_landlord", {}).receive("ok", this.got_view.bind(this));}, 3000
+                    );
+                
             }
         }
 
