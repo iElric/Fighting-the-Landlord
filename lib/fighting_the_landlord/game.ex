@@ -49,7 +49,7 @@ defmodule FightingTheLandlord.Game do
       )
       when guard_player_id(player_id) do
     %{
-      phase: :card_play,
+      phase: :call_landlord,
       landlord: nil,
       left: %{
         name: Enum.at(game_players, rem(player_id + 2, 3)),
@@ -79,7 +79,6 @@ defmodule FightingTheLandlord.Game do
   def player_view(
         %{
           phase: :call_landlord,
-          whose_turn: game_whose_turn,
           hands: game_hands,
           points: game_points,
           players: game_players
@@ -88,7 +87,7 @@ defmodule FightingTheLandlord.Game do
       )
       when player_id > 2 do
     %{
-      phase: :card_play,
+      phase: :call_landlord,
       landlord: nil,
       left: %{
         name: Enum.at(game_players, rem(player_id + 2, 3)),
@@ -300,8 +299,10 @@ defmodule FightingTheLandlord.Game do
         # this player pass, update the whose_turn
         game_state
         |> Map.put(:whose_turn, rem(game_whose_turn + 1, 3))
+        |> Map.put(:landlord_call, game_landlord_call + 1)
       end
     end
+  end
 
 
     @doc """

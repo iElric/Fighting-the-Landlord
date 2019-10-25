@@ -66,6 +66,7 @@ window.images_path = {
    "pass": "<%= Routes.static_path(@conn, "/images/pass.jpg") %>",
    "play": "<%= Routes.static_path(@conn, "/images/play.jpg") %>",
    "restart": "<%= Routes.static_path(@conn, "/images/restart.jpg") %>",
+   "call": "<%= Routes.static_path(@conn, "/images/call.jpg") %>",
 }
 //window.back_path = "<%= Routes.static_path(@conn, "/images/back.png") %>";
 

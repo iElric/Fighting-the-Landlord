@@ -74,7 +74,6 @@ defmodule FightingTheLandlordWeb.GamesChannel do
 
   def handle_in("who_wins", _payload, socket) do
     name = socket.assigns[:name]
-    player_id = socket.assigns[:player_id]
     game = GameServer.peek(name)
     winner_id = Game.who_wins(game)
     if is_nil(winner_id) do

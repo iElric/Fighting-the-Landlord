@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import _ from "lodash";
 
 export default function fighting_the_landlord_init(root, channel) {
-    ReactDOM.render(<FightingTheLandLord channel={channel}/>, root);
+    ReactDOM.render(<FightingTheLandLord channel={channel} />, root);
 }
 
 class FightingTheLandLord extends React.Component {
@@ -29,9 +29,10 @@ class FightingTheLandLord extends React.Component {
                 cards: [],
             },
             active: false,
-            previous_play: {position: null, cards: []},
+            previous_play: { position: null, cards: [] },
             selected_index: [],
-            message: ""
+            message: "",
+            left_over_cards: null
         };
 
         this.channel
@@ -44,6 +45,7 @@ class FightingTheLandLord extends React.Component {
         this.channel.on("player_joined", this.got_view.bind(this));
         this.channel.on("player_played", this.got_view.bind(this));
         this.channel.on("player_passed", this.got_view.bind(this));
+        this.channel.on("landlord_passed", this.got_view.bind(this));
         this.channel.on("new_round", this.got_view.bind(this));
         this.channel.on("new_msg", payload => {
             this.state.message += "\n" + `[${Date()}] ${payload.body}`;
@@ -103,12 +105,19 @@ class FightingTheLandLord extends React.Component {
     }
 
     updateCanvas(ctx) {
-        if (this.state.phase === "card_play") {
+        if (this.state.phase === "call_landlord") {
+            this.drawSides(ctx);
+            this.drawSelfCards(ctx);
+            this.drawCallLandordButton(ctx);
+            this.drawCardsLeft(ctx);
+        }
+        else if (this.state.phase === "card_play") {
             this.drawSides(ctx);
             this.drawPreviousPlay(ctx);
             this.drawSelfCards(ctx);
             this.drawButton(ctx);
-        } else {
+        } 
+        else {
             this.drawText(ctx);
         }
     }
@@ -117,6 +126,32 @@ class FightingTheLandLord extends React.Component {
         ctx.font = "30px Comic Sans MS";
         let message = "Waiting for players to join, game will automatically start when more than 2 people join this table...";
         ctx.fillText(message, 100, 100);
+    }
+
+    drawCardsLeft(ctx) {
+        let backImg = new Image();
+        backImg.src = images_path["back"];
+        backImg.onload = function () {
+            ctx.drawImage(backImg, 530, 100, 100, 150);
+            ctx.drawImage(backImg, 640, 100, 100, 150);
+            ctx.drawImage(backImg, 750, 100, 100, 150);
+        };
+    }
+
+    drawCallLandordButton(ctx) {
+        if (this.state.active === true) {
+            let callButton = new Image();
+            let passButton = new Image();
+            callButton.src = images_path["call"];
+            passButton.src = images_path["pass"];
+            passButton.onload = function () {
+                console.log("draw_pass");
+                ctx.drawImage(passButton, 500, 600, 70, 40);
+            };
+            callButton.onload = function () {
+                ctx.drawImage(callButton, 800, 600, 70, 40);
+            }
+        }
     }
 
     drawButton(ctx) {
@@ -153,14 +188,16 @@ class FightingTheLandLord extends React.Component {
                 }
                 i++;
             })).catch((err) => {
-            console.log("aa" + err + ";;;;;;");
-        });
+                console.log("aa" + err + ";;;;;;");
+            });
         ctx.fillText("Name: " + this.state.self.name, 500, 680);
         ctx.fillText("Score: " + this.state.self.points, 650, 680);
-        if (this.state.landlord === "self") {
-            ctx.fillText("landlord", 800, 680);
-        } else {
-            ctx.fillText("peasant", 800, 680);
+        if (this.state.phase === "card_play") {
+            if (this.state.landlord === "self") {
+                ctx.fillText("landlord", 800, 680);
+            } else {
+                ctx.fillText("peasant", 800, 680);
+            }
         }
     }
 
@@ -186,16 +223,18 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, 10, 80 + j * observer_dy);
                         j++;
                     })).catch((err) => {
-                    console.log(err);
-                });
+                        console.log(err);
+                    });
             }
         }
         ctx.fillText("Score: " + this.state.left.points, 0, 15);
         ctx.fillText("Name: " + this.state.left.name, 0, 40);
-        if (this.state.landlord === "left") {
-            ctx.fillText("landlord", 0, 65);
-        } else {
-            ctx.fillText("peasant", 0, 65);
+        if (this.state.phase === "card_play") {
+            if (this.state.landlord === "left") {
+                ctx.fillText("landlord", 0, 65);
+            } else {
+                ctx.fillText("peasant", 0, 65);
+            }
         }
 
         if (this.state.right.card !== null) {
@@ -212,16 +251,18 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, 1350, 80 + k * observer_dy);
                         k++;
                     })).catch((err) => {
-                    console.log(err);
-                });
+                        console.log(err);
+                    });
             }
         }
         ctx.fillText("Score: " + this.state.right.points, 1350, 15);
         ctx.fillText("Name: " + this.state.right.name, 1350, 40);
-        if (this.state.landlord === "right") {
-            ctx.fillText("landlord", 1350, 65);
-        } else {
-            ctx.fillText("peasant", 1350, 65);
+        if (this.state.phase === "card_play") {
+            if (this.state.landlord === "right") {
+                ctx.fillText("landlord", 1350, 65);
+            } else {
+                ctx.fillText("peasant", 1350, 65);
+            }
         }
     }
 
@@ -239,8 +280,8 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, self_start_x, self_start_y + i * dx);
                         i++;
                     })).catch((err) => {
-                    console.log("aa" + err + ";;;;;;");
-                });
+                        console.log("aa" + err + ";;;;;;");
+                    });
             }
             if (this.state.previous_play.position === "self") {
                 let self_start_x = 600;
@@ -252,8 +293,8 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, self_start_x + i * dx, self_start_y);
                         i++;
                     })).catch((err) => {
-                    console.log("aa" + err + ";;;;;;");
-                });
+                        console.log("aa" + err + ";;;;;;");
+                    });
             }
         }
     }
@@ -287,27 +328,34 @@ class FightingTheLandLord extends React.Component {
             } else {
                 new_index.push(index);
             }
-            let state1 = _.assign({}, this.state, {selected_index: new_index});
+            let state1 = _.assign({}, this.state, { selected_index: new_index });
             this.setState(state1, () => console.log(this.state.selected_index));
 
         }
 
         if (cx >= 500 && cx <= 580 && cy >= 600 && cy <= 660) {
-            if (this.state.active && this.state.self.cards.length !== 0) {
+            if (this.state.active && this.state.self.cards.length !== 0 && this.state.phase === "card_play") {
                 this.channel.push("pass", {})
                     .receive("ok", this.got_view.bind(this));
+            }
+            if (this.state.active && this.state.phase === "call_landlord") {
+                this.channel.push("pass_landlord", {}).receive("ok", this.got_view.bind(this));
             }
         }
 
         if (cx >= 800 && cx <= 875 && cy >= 620 && cy <= 660) {
-            if (this.state.active && this.state.self.cards.length !== 0) {
+            if (this.state.active && this.state.self.cards.length !== 0 && this.state.phase === "card_play") {
                 this.state.selected_index.sort((a, b) => {
                     return a - b
                 });
-                this.channel.push("play_cards", {card_indexes: this.state.selected_index})
+                this.channel.push("play_cards", { card_indexes: this.state.selected_index })
                     .receive("ok", this.got_view.bind(this));
 
                 this.channel.push("who_wins", {}).receive("ok", this.get_winner.bind(this));
+            }
+
+            if (this.state.active && this.state.phase === "call_landlord") {
+                alert("call landlord");
             }
         }
 
@@ -319,7 +367,7 @@ class FightingTheLandLord extends React.Component {
     }
 
     sendText() {
-        this.channel.push("new_msg", {body: window.user_name + ": " + document.getElementById("textInput").value});
+        this.channel.push("new_msg", { body: window.user_name + ": " + document.getElementById("textInput").value });
     }
 
     updateChatRoom() {
@@ -331,16 +379,16 @@ class FightingTheLandLord extends React.Component {
         return (<div>
             <canvas id="main" ref="canvas" width="1500" height="1000">
             </canvas>
-            <ChatBoard phase={this.state.phase}/>
-            <TextInput phase={this.state.phase}/>
-            <SendButton phase={this.state.phase} onSendClick={() => this.sendText()}/>
+            <ChatBoard phase={this.state.phase} />
+            <TextInput phase={this.state.phase} />
+            <SendButton phase={this.state.phase} onSendClick={() => this.sendText()} />
         </div>)
     }
 }
 
 function ChatBoard(props) {
-    let {phase} = props;
-    if (phase !== "waiting_for_players") {
+    let { phase } = props;
+    if (phase === "card_play") {
         return (<div className="textClass">
             <textarea id="chatBoard" readOnly></textarea>
         </div>)
@@ -350,8 +398,8 @@ function ChatBoard(props) {
 
 
 function SendButton(props) {
-    let {phase, onSendClick} = props;
-    if (phase !== "waiting_for_players") {
+    let { phase, onSendClick } = props;
+    if (phase === "card_play") {
         return (<div className="userInput">
             <p>
                 <button id="sendButton" onClick={onSendClick}>Send</button>
@@ -363,8 +411,8 @@ function SendButton(props) {
 }
 
 function TextInput(props) {
-    let {phase} = props;
-    if (phase !== "waiting_for_players") {
+    let { phase } = props;
+    if (phase === "card_play") {
         return (<p><input id="textInput" size="35"></input></p>)
     }
     return null;
