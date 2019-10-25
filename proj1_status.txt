@@ -1,0 +1,40 @@
+
+Web Dev Spring 2018 Project 1 Status
+
+Answer the following questions:
+
+
+1. What are the names of the members of your team?
+Yexin Wang
+Hongjie Li
+
+2. What's the URL of the github repo with your code for this project?
+https://github.com/iElric/fighting_the_landlord.git
+
+
+3. What is the URL(s) that you deployed to?
+http://doudizhu.ielric.com/
+http://doudizhu.lilydevelop.com/
+
+
+4. Is your app functionality complete? If not, what's missing?
+Yes
+
+
+5. Is your app properly deployed? If not, what went wrong?
+Yes
+
+
+6. What parts of the project did each team member work on?
+Yexin Wang: Back-end
+Hongjie Li: Front-end
+
+7. Are all your third-party assets appropriately licensed and credited?
+Yes
+
+
+And here's a list of tasks for grading comments. Just leave this here:
+ - Development
+ - Deployment
+ - Submission
+ - Report
