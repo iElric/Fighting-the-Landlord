@@ -1,6 +1,6 @@
 defmodule FightingTheLandlord.Poker do
   @doc """
-  Create a new suit of 54 cards deck, shuffle it and split to 17, 17, 17, 3 as 4 parts and return. Deck is a list of tuples.
+  Create a new deck of 54 cards deck, shuffle it and split to 17, 17, 17, 3 as 4 parts and return. Deck is a list of tuples.
   Each card is a tuple {weight, suit}.
   The weights represent the weight of the card, "3" to "10" have weights from 3 to 10.
   "11" -> "J"
