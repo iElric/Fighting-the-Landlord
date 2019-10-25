@@ -89,22 +89,22 @@ end
 A Card is a tuple as `{weight, suit}`. A deck of cards is a list of 54 tuples. Unlike the Poker, “2” has the highest weight (rank) in solo cards except for jokers. Please refer to the table below:
 
 | Card            | Weight |
-| --------------- | ----- |
-| "3"             | 3     |
-| "4"             | 4     |
-| "5"             | 5     |
-| "6"             | 6     |
-| "7"             | 7     |
-| "8"             | 8     |
-| "9"             | 9     |
-| "10"            | 10    |
-| "J"             | 11    |
-| "Q"             | 12    |
-| "K"             | 13    |
-| "A"             | 14    |
-| "2"             | 15    |
-| "B&W Joker"     | 50    |
-| "Colored Joker" | 100   |
+| --------------- | ------ |
+| "3"             | 3      |
+| "4"             | 4      |
+| "5"             | 5      |
+| "6"             | 6      |
+| "7"             | 7      |
+| "8"             | 8      |
+| "9"             | 9      |
+| "10"            | 10     |
+| "J"             | 11     |
+| "Q"             | 12     |
+| "K"             | 13     |
+| "A"             | 14     |
+| "2"             | 15     |
+| "B&W Joker"     | 50     |
+| "Colored Joker" | 100    |
 
 ### Game State
 
@@ -175,48 +175,48 @@ The client view is tricky since in this game each player should only see their o
 When it is the player's turn to play cards, the player has two choices. The first one is pass, which means the player doesn’t want to play any cards, or the player doesn’t have any legal category of cards to play respecting the game rules. The second one is to play, the player can only play cards that have a higher rank and the same category with the cards being played previously. Therefore, the core of this game is to determine card categories and do some comparisons. 
 
 The legal categories of cards are shown as tables:
-| Card Category       | Length | Description                                  | Example                                       |
-| ------------------- | ------ | -------------------------------------------- | --------------------------------------------- |
-| solo                | 1      | any single card                               | 3                                             |
-| pair                | 2      | two equal rank cards                         | 3,3                                           |
-| bomb                | 2      | two jokers                                   | two jokers                                    |
-| trio                | 3      | three equal rank cards                       | 3,3,3                                         |
-| four_with_solo      | 3      | jokers with solo                             | two jokers, 3                                 |
-| bomb                | 4      | four equal rank cards                        | 3,3,3,3                                       |
-| trio_with_solo      | 4      | three equal rank with solo                   | 3,3,3,4                                       |
-| four_with_two       | 4      | jokers with two cards                        | two jokers,3,4                                |
-| trio_with_pair      | 5      | three equal rank with pair                   | 3,3,3,4,4                                     |
-| four_with_solo      | 5      | four equal rank cards with solo              | 3,3,3,3,4                                     |
-| chain               | 5      | five consecutive rank cards(3 - 14)          | 3,4,5,6,7                                     |
-| four_with_two       | 6      | four equal rank cards with two cards         | 3,3,3,3,4,5                                   |
-| four_with_pairs     | 6      | four equal rank cards with one pair          | 3,3,3,3,4,4                                   |
-| pair_chain          | 6      | three consecutive pairs(3 - 14)              | 3,3,4,4,5,5                                   |
-| airplane            | 6      | two consecutive trios                        | 3,3,3,4,4,4                                   |
-| chain               | 6      | six consecutive cards                        | 3,4,5,6,7,8                                   |
-| chain               | 7      | seven consecutive cards                      | 3,4,5,6,7,8,9                                 |
+| Card Category       | Length | Description                                 | Example                                       |
+| ------------------- | ------ | ------------------------------------------- | --------------------------------------------- |
+| solo                | 1      | any single card                             | 3                                             |
+| pair                | 2      | two equal rank cards                        | 3,3                                           |
+| bomb                | 2      | two jokers                                  | two jokers                                    |
+| trio                | 3      | three equal rank cards                      | 3,3,3                                         |
+| four_with_solo      | 3      | jokers with solo                            | two jokers, 3                                 |
+| bomb                | 4      | four equal rank cards                       | 3,3,3,3                                       |
+| trio_with_solo      | 4      | three equal rank with solo                  | 3,3,3,4                                       |
+| four_with_two       | 4      | jokers with two cards                       | two jokers,3,4                                |
+| trio_with_pair      | 5      | three equal rank with pair                  | 3,3,3,4,4                                     |
+| four_with_solo      | 5      | four equal rank cards with solo             | 3,3,3,3,4                                     |
+| chain               | 5      | five consecutive rank cards(3 - 14)         | 3,4,5,6,7                                     |
+| four_with_two       | 6      | four equal rank cards with two cards        | 3,3,3,3,4,5                                   |
+| four_with_pairs     | 6      | four equal rank cards with one pair         | 3,3,3,3,4,4                                   |
+| pair_chain          | 6      | three consecutive pairs(3 - 14)             | 3,3,4,4,5,5                                   |
+| airplane            | 6      | two consecutive trios                       | 3,3,3,4,4,4                                   |
+| chain               | 6      | six consecutive cards                       | 3,4,5,6,7,8                                   |
+| chain               | 7      | seven consecutive cards                     | 3,4,5,6,7,8,9                                 |
 | airplane_with_solos | 8      | two consecutive trios with two cards(3 -14) | 3,3,3,4,4,4,5,6                               |
-| four_with_two_pairs | 8      | four same rank cards with two pairs          | 3,3,3,3,4,4,6,6                               |
-| pair_chain          | 8      | four consecutive pairs(3 - 14)               | 3,3,4,4,5,5,6,6                               |
-| chain               | 8      | eight consecutive cards(3 - 14)              | 3,4,5,6,7,8,9,10                              |
-| airplane            | 9      | three consecutive trios                      | 3,3,3,4,4,4,5,5,5                             |
-| chain               | 9      | nine consecutive cards(3 -14)                | 3,4,5,6,7,8,9,10,11                           |
-| airplane_with_pairs | 10     | two consecutive trios with two pairs         | 3,3,3,4,4,4,5,5,6,6                           |
-| pair_chain          | 10     | five consecutive pairs(3 -14)                | 3,3,4,4,5,5,6,6,7,7                           |
-| chain               | 10     | ten consecutive cards(3 -14)                 | 3,4,5,6,7,8,9,10,11,12                        |
-| chain               | 11     | eleven consecutive cards(3 -14)              | 3,4,5,6,7,8,9,10,11,12,13                     |
-| airplane            | 12     | four consecutive trios                       | 3,3,3,4,4,4,5,5,5,6,6,6                       |
-| airplane_with_solos | 12     | three consecutive trios with three cards     | 3,3,3,4,4,4,5,5,5,9,10,11                     |
-| pair_chain          | 12     | six consecutive pairs                         | 3,3,4,4,5,5,6,6,7,7,8,8                       |
-| chain               | 12     | twelve consecutive cards (3 -14)             | 3,4,5,6,7,8,9,10,11,12,13,14                  |
-| pair_chain          | 14     | seven consecutive pairs(3 -14)               | 3,3,4,4,5,5,6,6,7,7,8,8,9,9                   |
-| airplane            | 15     | five consecutive trios                       | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,7                 |
-| airplane_with_pairs | 15     | three consecutive trios with three pairs     | 3,3,3,4,4,4,5,5,5,7,7,10,10,11,11             |
-| airplane_with_solos | 16     | four consecutive trios with four cards       | 3,3,3,4,4,4,5,5,5,5,6,6,6,8,10,11,14          |
-| airplane            | 18     | nine consecutive trios                       | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8           |
-| pair_chain          | 18     | six consecutive pairs                        | 3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11       |
-| airplane_with_solos | 20     | five consecutive trios with five cards       | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,9,9,10,11,12    |
-| airplane_with_pairs | 20     | four consecutive trios with four pairs       | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,9,9,12,12,13,13   |
-| pair_chain          | 20     | ten consecutive pairs                        | 3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12 |
+| four_with_two_pairs | 8      | four same rank cards with two pairs         | 3,3,3,3,4,4,6,6                               |
+| pair_chain          | 8      | four consecutive pairs(3 - 14)              | 3,3,4,4,5,5,6,6                               |
+| chain               | 8      | eight consecutive cards(3 - 14)             | 3,4,5,6,7,8,9,10                              |
+| airplane            | 9      | three consecutive trios                     | 3,3,3,4,4,4,5,5,5                             |
+| chain               | 9      | nine consecutive cards(3 -14)               | 3,4,5,6,7,8,9,10,11                           |
+| airplane_with_pairs | 10     | two consecutive trios with two pairs        | 3,3,3,4,4,4,5,5,6,6                           |
+| pair_chain          | 10     | five consecutive pairs(3 -14)               | 3,3,4,4,5,5,6,6,7,7                           |
+| chain               | 10     | ten consecutive cards(3 -14)                | 3,4,5,6,7,8,9,10,11,12                        |
+| chain               | 11     | eleven consecutive cards(3 -14)             | 3,4,5,6,7,8,9,10,11,12,13                     |
+| airplane            | 12     | four consecutive trios                      | 3,3,3,4,4,4,5,5,5,6,6,6                       |
+| airplane_with_solos | 12     | three consecutive trios with three cards    | 3,3,3,4,4,4,5,5,5,9,10,11                     |
+| pair_chain          | 12     | six consecutive pairs                       | 3,3,4,4,5,5,6,6,7,7,8,8                       |
+| chain               | 12     | twelve consecutive cards (3 -14)            | 3,4,5,6,7,8,9,10,11,12,13,14                  |
+| pair_chain          | 14     | seven consecutive pairs(3 -14)              | 3,3,4,4,5,5,6,6,7,7,8,8,9,9                   |
+| airplane            | 15     | five consecutive trios                      | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,7                 |
+| airplane_with_pairs | 15     | three consecutive trios with three pairs    | 3,3,3,4,4,4,5,5,5,7,7,10,10,11,11             |
+| airplane_with_solos | 16     | four consecutive trios with four cards      | 3,3,3,4,4,4,5,5,5,5,6,6,6,8,10,11,14          |
+| airplane            | 18     | nine consecutive trios                      | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8           |
+| pair_chain          | 18     | six consecutive pairs                       | 3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11       |
+| airplane_with_solos | 20     | five consecutive trios with five cards      | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,7,9,9,10,11,12    |
+| airplane_with_pairs | 20     | four consecutive trios with four pairs      | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,9,9,12,12,13,13   |
+| pair_chain          | 20     | ten consecutive pairs                       | 3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12 |
 
 * Compare only the same Category. A player can only beat the prior hand using of the same Category but not the others. Note that this means that the ordering of the rows in the following table is not relevant to game play.
 * Compare only the Chains with the same length. Beat the prior hand using the same number of cards is a basic doctrine which only the Rocket and the Bomb may violate. For example, although both 9-10-J-Q-K and 3-4-5-6-7-8-9 are Single Chains, 9-10-J-Q-K cannot beat 3-4-5-6-7-8-9, nor vice versa.
