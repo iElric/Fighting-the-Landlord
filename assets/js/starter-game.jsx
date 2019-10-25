@@ -51,7 +51,10 @@ class FightingTheLandLord extends React.Component {
         this.channel.on("new_msg", payload => {
             this.state.message += "\n" + `[${Date()}] ${payload.body}`;
             this.updateChatRoom();
-        })
+        });
+        this.channel.on("show_left_over", payload => {
+            const ctx = this.refs.canvas.getContext('2d');
+            this.drawCardsLeftForEveryOne(ctx);});
 
     }
 
@@ -60,14 +63,12 @@ class FightingTheLandLord extends React.Component {
         this.refs.canvas.addEventListener("mousedown", this.onDown.bind(this), false);
         const ctx = this.refs.canvas.getContext('2d');
         ctx.font = "20px Comic Sans MS";
-        console.log("mount1");
         this.updateCanvas(ctx);
 
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (!(prevState === this.state)) {
-            console.log("updateww");
             const ctx = this.refs.canvas.getContext('2d');
             ctx.font = "20px Comic Sans MS";
             ctx.clearRect(0, 0, 1500, 1000);
@@ -83,7 +84,6 @@ class FightingTheLandLord extends React.Component {
     }
 
     get_winner(res) {
-        console.log(res);
         if (res.winner) {
             const ctx = this.refs.canvas.getContext('2d');
             ctx.clearRect(0, 0, 1500, 1000);
@@ -124,7 +124,7 @@ class FightingTheLandLord extends React.Component {
 
     drawText(ctx) {
         ctx.font = "30px Comic Sans MS";
-        let message = "Waiting for players to join, game will automatically start when more than 2 people join this table...";
+        let message = "Waiting for players to join, game will start when more than 2 people join this table...";
         ctx.fillText(message, 100, 100);
     }
 
@@ -148,7 +148,7 @@ class FightingTheLandLord extends React.Component {
                     ctx.drawImage(image, 530 + i * dx, 100);
                     i++;
                 })).catch((err) => {
-                    console.log("aa" + err + ";;;;;;");
+                    console.log(err);
                 });
 
         }
@@ -163,7 +163,7 @@ class FightingTheLandLord extends React.Component {
                 ctx.drawImage(image, 530 + i * dx, 100);
                 i++;
             })).catch((err) => {
-                console.log("aa" + err + ";;;;;;");
+                console.log(err);
             });
     }
 
@@ -174,7 +174,6 @@ class FightingTheLandLord extends React.Component {
             callButton.src = images_path["call"];
             passButton.src = images_path["pass"];
             passButton.onload = function () {
-                console.log("draw_pass");
                 ctx.drawImage(passButton, 500, 600, 70, 40);
             };
             callButton.onload = function () {
@@ -217,7 +216,7 @@ class FightingTheLandLord extends React.Component {
                 }
                 i++;
             })).catch((err) => {
-                console.log("aa" + err + ";;;;;;");
+                console.log(err);
             });
         ctx.fillText("Name: " + this.state.self.name, 500, 680);
         ctx.fillText("Score: " + this.state.self.points, 650, 680);
@@ -266,7 +265,7 @@ class FightingTheLandLord extends React.Component {
             }
         }
 
-        if (this.state.right.card !== null) {
+        if (this.state.right.cards !== null) {
             let right_card_left = this.state.right.cards;
             if (typeof (this.state.right.cards) === "number") {
                 backImg.onload = function () {
@@ -309,7 +308,7 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, self_start_x, self_start_y + i * dx);
                         i++;
                     })).catch((err) => {
-                        console.log("aa" + err + ";;;;;;");
+                        console.log(err);
                     });
             }
             if (this.state.previous_play.position === "self") {
@@ -322,7 +321,7 @@ class FightingTheLandLord extends React.Component {
                         ctx.drawImage(image, self_start_x + i * dx, self_start_y);
                         i++;
                     })).catch((err) => {
-                        console.log("aa" + err + ";;;;;;");
+                        console.log(err);
                     });
             }
         }
@@ -332,7 +331,6 @@ class FightingTheLandLord extends React.Component {
         ctx.clearRect(500, 700, 70, 40);
         let restartImg = new Image();
         restartImg.src = images_path["restart"];
-        console.log("draw restart");
         restartImg.onload = function () {
             ctx.drawImage(restartImg, 600, 600, 70, 40);
         };
@@ -358,7 +356,7 @@ class FightingTheLandLord extends React.Component {
                 new_index.push(index);
             }
             let state1 = _.assign({}, this.state, { selected_index: new_index });
-            this.setState(state1, () => console.log(this.state.selected_index));
+            this.setState(state1);
 
         }
 

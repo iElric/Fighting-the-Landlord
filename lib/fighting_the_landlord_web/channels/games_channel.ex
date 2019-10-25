@@ -89,7 +89,7 @@ defmodule FightingTheLandlordWeb.GamesChannel do
   end
 
   def handle_in("show_left_over", _payload, socket) do
-    broadcast!(socket, "show_left_over", %{body: body})
+    broadcast!(socket, "show_left_over", %{})
     {:noreply, socket}
   end
 
