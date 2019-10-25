@@ -18,9 +18,7 @@ defmodule FightingTheLandlord.GameServer do
   end
 
   def start_link(name) do
-    # right now just call landlord here
     game = FightingTheLandlord.BackupAgent.get(name) || Game.new()
-                                                        |> Game.call_landlord()
     GenServer.start_link(__MODULE__, game, name: reg(name))
   end
 
@@ -32,8 +30,12 @@ defmodule FightingTheLandlord.GameServer do
     GenServer.call(reg(name), {:add_player, name, player_name})
   end
 
-  def call_landlord(name) do
-    GenServer.call(reg(name), {:call_landlord, name})
+  def call_landlord(name, player_id) do
+    GenServer.call(reg(name), {:call_landlord, name, player_id})
+  end
+
+  def pass_landlord(name, player_id) do
+    GenServer.call(reg(name), {:pass_landlord, name, player_id})
   end
 
   def play_cards(name, player_id, card_indexes) do
@@ -66,10 +68,26 @@ defmodule FightingTheLandlord.GameServer do
     {:reply, {game, index}, game}
   end
 
-  def handle_call({:call_landlord, name}, _from, game) do
-    game = Game.call_landlord(game)
-    BackupAgent.put(name, game)
-    {:reply, game, game}
+  def handle_call({:call_landlord, name, player_id}, _from, game) do
+    new_game = Game.call_landlord(game, player_id)
+    if is_nil(new_game) do
+      # this call is illegal
+      # return old game_state
+      {:reply, game, game}
+    else
+      BackupAgent.put(name, new_game)
+      {:reply, new_game, new_game}
+    end
+  end
+
+  def handle_call({:pass_landlord, name, player_id}, _from, game) do
+    new_game = Game.pass_landlord(game, player_id)
+    if is_nil(new_game) do
+      {:reply, game, game}
+    else
+      BackupAgent.put(name, new_game)
+      {:reply, new_game, new_game}
+    end
   end
 
   def handle_call({:play_cards, name, player_id, card_indexes}, _from, game) do
