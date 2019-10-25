@@ -40,6 +40,22 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     end
   end
 
+  def handle_in("call_landlord", _payload, socket) do
+    name = socket.assigns[:name]
+    player_id = socket.assigns[:player_id]
+    game = GameServer.call_landlord(name, player_id)
+    broadcast!(socket, "landlord_called", game)
+    {:reply, {:ok, %{"game" => Game.player_view(game, player_id)}}, socket}
+  end
+
+  def handle_in("pass_landlord", _payload, socket) do
+    name = socket.assigns[:name]
+    player_id = socket.assigns[:player_id]
+    game = GameServer.pass_landlord(name, player_id)
+    broadcast!(socket, "landlord_passed", game)
+    {:reply, {:ok, %{"game" => Game.player_view(game, player_id)}}, socket}
+  end
+
   def handle_in("play_cards", %{"card_indexes" => card_indexes}, socket) do
     name = socket.assigns[:name]
     player_id = socket.assigns[:player_id]
@@ -80,7 +96,7 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     {:noreply, socket}
   end
 
-  intercept ["player_joined", "player_played", "player_passed", "new_round"]
+  intercept ["player_joined", "player_played", "player_passed", "new_round", "landlord_called", "landlord_passed"]
 
   def handle_out("player_joined", game, socket) do
     player_id = socket.assigns[:player_id]
@@ -89,6 +105,18 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     else
       push(socket, "player_joined", %{"game" => nil})
     end
+    {:noreply, socket}
+  end
+
+  def handle_out("landlord_called", game, socket) do
+    player_id = socket.assigns[:player_id]
+    push(socket, "landlord_called", %{"game" => Game.player_view(game, player_id)})
+    {:noreply, socket}
+  end
+
+  def handle_out("landlord_passed", game, socket) do
+    player_id = socket.assigns[:player_id]
+    push(socket, "landlord_passed", %{"game" => Game.player_view(game, player_id)})
     {:noreply, socket}
   end
 

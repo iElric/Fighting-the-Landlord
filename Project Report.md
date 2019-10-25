@@ -16,10 +16,10 @@ _Dou dizhu_ (aka “Fighting the Landlord”) is a card game in the genre of she
 In our project, we render every card as an image, and we use canvas to draw these images. There are 4 major components in the canvas. Besides, there are 2 types of view in our application. The first type is the player view, and the second type is the observer view.
 
 ## Join a table with Player Name
-When visiting the home page, users have to enter a table name and player name to join the game. The table name is the identifier of a specific game room, and the player name is the identifier of that player. No duplicate names are allowed.
+When visiting the home page, users have to enter a table name and a player name to join the game. The table name is the identifier of a specific game room, and the player name is the identifier of that player. No duplicate names are allowed.
 
 ### Waiting for other players
-The game won’t start unless there are more than 2 players, the page will show a message: “Waiting for players to join, game will start when more than 2 people join this table…”. The game will start automatically when there are enough players. A view will be given to the user depends on whether the user is a player or an observer. 
+The game won’t start unless there are more than 2 players, the page will show a message: “Waiting for players to join, game will automatically start when more than 2 people join this table…”. The game will start automatically when there are enough players. A view will be given to the user depends on whether the user is a player or an observer. 
 
 ### Player View
 There are 4 major components in a player view:
@@ -43,13 +43,15 @@ Our game has several interactions between clients and the server. Almost every a
 Since we have to implement the mechanism that game only starts when users are more than two in that game room, we have to notify the other players that a new user has joined. For each user, the player has to join first and send the message to channel. In join, broadcast can’t be done, I solved this by using `send()` to self and broadcast in `handle_info()`. Channel now pushes the new game state to clients. This message has to be intercepted and customized in `handle_out()`since clients should have their views. What’s more, clients should have a `this.channel.on()`to listen for that “player_joined” message.
 
 ### Player Played 
-When a player has just played some cards, a message will be sent to channel. Channel will pass those played cards to the server to check if the play is legal. Two situations here:
-* If the play is legal, then the sever update the game state and channel will broadcast to others. This message has to be intercepted by `handle_out()`since client views have to be customized based on the roles of players.
-* If the play is illegal, then the game state remains the same so no need to broadcast.
+When a player has just played some cards, a message will be sent to channel with selected cards' indexes as payload. Channel will pass those indexes to the server to check if the play is legal. The sever update the game state and channel will broadcast to others. This message has to be intercepted by `handle_out()`since client views have to be customized based on the roles of players.
 Same as player joined, a client should have a `this.channel.on()`to listen for that “player_played” message.
 
 ### Player Passed
-Same logic as the player played.
+When a player has just passed, a message will be sent to channel. Channel will pass the player id to check if this player can pass. Then the sever update the game state and channel will broadcast to others. This message has to be intercepted by `handle_out()`since client views have to be customized based on the roles of players.
+A client should have a `this.channel.on()`to listen for that “player_passed” message.
+
+### Who Wins
+When a player played some cards. Client will send a message to channel to query if this client has won. The channel will return a boolean value to indicate this client win or not.
 
 ### New Round
 Who wins current round get a restart button to start a new round. Since the game state will change, this winner has to send message to channel, a channel then ask server to give a new game state with previous points preserved and broadcast to other clients. This message has to be intercepted by `handle_out()`since client_view has to be customized based on the roles of users. 
