@@ -88,6 +88,11 @@ defmodule FightingTheLandlordWeb.GamesChannel do
     {:noreply, socket}
   end
 
+  def handle_in("show_left_over", _payload, socket) do
+    broadcast!(socket, "show_left_over", %{body: body})
+    {:noreply, socket}
+  end
+
   def handle_info(:after_join, socket) do
     name = socket.assigns[:name]
     game = GameServer.peek(name)
@@ -141,6 +146,4 @@ defmodule FightingTheLandlordWeb.GamesChannel do
   defp authorized?(_payload) do
     true
   end
-
-
 end
