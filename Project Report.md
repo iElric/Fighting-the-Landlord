@@ -88,7 +88,7 @@ end
 
 A Card is a tuple as `{weight, suit}`. A deck of cards is a list of 54 tuples. Unlike the Poker, “2” has the highest weight (rank) in solo cards except for jokers. Please refer to the table below:
 
-| Card            | Weght |
+| Card            | Weight |
 | --------------- | ----- |
 | "3"             | 3     |
 | "4"             | 4     |
@@ -177,7 +177,7 @@ When it is the player's turn to play cards, the player has two choices. The firs
 The legal categories of cards are shown as tables:
 | Card Category       | Length | Description                                  | Example                                       |
 | ------------------- | ------ | -------------------------------------------- | --------------------------------------------- |
-| solo                | 1      | any sigle card                               | 3                                             |
+| solo                | 1      | any single card                               | 3                                             |
 | pair                | 2      | two equal rank cards                         | 3,3                                           |
 | bomb                | 2      | two jokers                                   | two jokers                                    |
 | trio                | 3      | three equal rank cards                       | 3,3,3                                         |
@@ -194,7 +194,7 @@ The legal categories of cards are shown as tables:
 | airplane            | 6      | two consecutive trios                        | 3,3,3,4,4,4                                   |
 | chain               | 6      | six consecutive cards                        | 3,4,5,6,7,8                                   |
 | chain               | 7      | seven consecutive cards                      | 3,4,5,6,7,8,9                                 |
-| airplane_with_solos | 8      | two consectutive trios with two cards(3 -14) | 3,3,3,4,4,4,5,6                               |
+| airplane_with_solos | 8      | two consecutive trios with two cards(3 -14) | 3,3,3,4,4,4,5,6                               |
 | four_with_two_pairs | 8      | four same rank cards with two pairs          | 3,3,3,3,4,4,6,6                               |
 | pair_chain          | 8      | four consecutive pairs(3 - 14)               | 3,3,4,4,5,5,6,6                               |
 | chain               | 8      | eight consecutive cards(3 - 14)              | 3,4,5,6,7,8,9,10                              |
@@ -206,7 +206,7 @@ The legal categories of cards are shown as tables:
 | chain               | 11     | eleven consecutive cards(3 -14)              | 3,4,5,6,7,8,9,10,11,12,13                     |
 | airplane            | 12     | four consecutive trios                       | 3,3,3,4,4,4,5,5,5,6,6,6                       |
 | airplane_with_solos | 12     | three consecutive trios with three cards     | 3,3,3,4,4,4,5,5,5,9,10,11                     |
-| pair_chain          | 12     | six consective pairs                         | 3,3,4,4,5,5,6,6,7,7,8,8                       |
+| pair_chain          | 12     | six consecutive pairs                         | 3,3,4,4,5,5,6,6,7,7,8,8                       |
 | chain               | 12     | twelve consecutive cards (3 -14)             | 3,4,5,6,7,8,9,10,11,12,13,14                  |
 | pair_chain          | 14     | seven consecutive pairs(3 -14)               | 3,3,4,4,5,5,6,6,7,7,8,8,9,9                   |
 | airplane            | 15     | five consecutive trios                       | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,7                 |
@@ -218,7 +218,7 @@ The legal categories of cards are shown as tables:
 | airplane_with_pairs | 20     | four consecutive trios with four pairs       | 3,3,3,4,4,4,5,5,5,6,6,6,7,7,9,9,12,12,13,13   |
 | pair_chain          | 20     | ten consecutive pairs                        | 3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12 |
 
-* Compare only the same Category. A player can only beat the prior hand using of the same Category but not the others. Note that this means that the ordering of the rows in the following table is not relevant to gameplay.
+* Compare only the same Category. A player can only beat the prior hand using of the same Category but not the others. Note that this means that the ordering of the rows in the following table is not relevant to game play.
 * Compare only the Chains with the same length. Beat the prior hand using the same number of cards is a basic doctrine which only the Rocket and the Bomb may violate. For example, although both 9-10-J-Q-K and 3-4-5-6-7-8-9 are Single Chains, 9-10-J-Q-K cannot beat 3-4-5-6-7-8-9, nor vice versa.
 * Compare the rank in the Primal cards only. The Kicker's rank is irrelevant to the comparison unless a variation with 2+ decks is being played.
 * Jokers and 2 are non-consecutive cards. Colored Joker, black-and-white Joker, and 2 cannot be used in any of the Primal cards of the Chains since they are not traditionally considered as the consecutive cards sequentially next to the Ace. Examples of illegal Chain: 2-3-4-5-6, 2-2-2-3-3-3 w/ A-A-7-7, K-A-2 + B&W Joker + Colored Joker.
@@ -371,7 +371,7 @@ The player can pass if:
 1. This is not the first turn of this game which means landlord can’t pass his or her first turn (and he or she has no reason to do so either).
 2. The previous played player is not this player. When other two passed this player’s cards, then it’s his privilege to play any category of legal cards.
 
-Play and pass can only be conducted when the current player id is the same as the id stord in whose turn. This has been enforced in code.
+Play and pass can only be conducted when the current player id is the same as the id stored in whose turn. This has been enforced in code.
 Let's say there are 3 players a, b and c.  A is the landlord of this game. The first situation is when a game just started, a has to play first, he or she cannot pass that time. The cards she or he played are limited by category checking and value comparing rules of this game. The second situation is that, for instance, when b played some cards, then player c and player a both passed. when it’s player b's turn, he or she cannot pass but can play any legal cards. 
 
 When a player played or passed in his turn, we will update the `whose_turn` in game state by `(current_player_id + 1) % 3`
@@ -380,7 +380,7 @@ except for this is the last turn (this player has played all his hands and win).
 ### Calculate Score
 
 The base point of a game is 5 which means if the landlord wins, he or she will get 10 points as a reward while the other two peasants will lose 5 points each.
-For each bomb that occurred in this game, the base point will be multiplied by 2. For example,  if 3 bombs have been played in this game, then the landlord will get 80 points and each peasant will lose 40 points. This rule can make the game more exciting and affect the gameplay (you don’t want to play bombs without careful thinking).
+For each bomb that occurred in this game, the base point will be multiplied by 2. For example,  if 3 bombs have been played in this game, then the landlord will get 80 points and each peasant will lose 40 points. This rule can make the game more exciting and affect the game play (you don’t want to play bombs without careful thinking).
 
 ## Challenges and Solutions
 
