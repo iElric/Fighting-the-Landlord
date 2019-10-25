@@ -355,7 +355,7 @@ defmodule FightingTheLandlord.Game do
     # this if is to fix a bug when no body call landlord, when we call
     # start_new_round, the points will be updated
     # this solution maybe not elegant
-    if game_phase === card_play do
+    if game_phase === :card_play do
       if game_landlord === game_whose_turn do
         game_points
         |> Enum.with_index()
