@@ -19,7 +19,7 @@ In our project, we render every card as an image, and we use canvas to draw thes
 When visiting the home page, users have to enter a table name and a player name to join the game. The table name is the identifier of a specific game room, and the player name is the identifier of that player. No duplicate names are allowed.
 
 ### Waiting for other players
-The game won’t start unless there are more than 2 players, the page will show a message: “Waiting for players to join, game will automatically start when more than 2 people join this table…”. The game will start automatically when there are enough players. A view will be given to the user depends on whether the user is a player or an observer. 
+The game won’t start unless there are more than 2 players, the page will show a message: “Waiting for players to join, game will start when more than 2 people join this table…”. The game will start automatically when there are enough players. A view will be given to the user depends on whether the user is a player or an observer. 
 
 ### Player View
 There are 4 major components in a player view:

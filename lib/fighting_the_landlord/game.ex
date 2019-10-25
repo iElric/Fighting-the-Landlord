@@ -91,21 +91,21 @@ defmodule FightingTheLandlord.Game do
       phase: :call_landlord,
       landlord: nil,
       left: %{
-        name: Enum.at(game_players, rem(player_id + 2, 3)),
-        points: Enum.at(game_points, rem(player_id + 2, 3)),
-        cards: Enum.at(game_hands, rem(player_id + 2, 3))
+        name: Enum.at(game_players, 0),
+        points: Enum.at(game_points, 0),
+        cards: Enum.at(game_hands, 0)
                |> Poker.card_string()
       },
       right: %{
-        name: Enum.at(game_players, rem(player_id + 1, 3)),
-        points: Enum.at(game_points, rem(player_id + 1, 3)),
-        cards: Enum.at(game_hands, rem(player_id + 1, 3))
+        name: Enum.at(game_players, 1),
+        points: Enum.at(game_points, 1),
+        cards: Enum.at(game_hands, 1)
                |> Poker.card_string()
       },
       self: %{
-        name: Enum.at(game_players, player_id),
-        points: Enum.at(game_points, player_id),
-        cards: Enum.at(game_hands, player_id)
+        name: Enum.at(game_players, 2),
+        points: Enum.at(game_points, 2),
+        cards: Enum.at(game_hands, 2)
                |> Poker.card_string()
       },
       active: false,
