@@ -385,13 +385,13 @@ For each bomb that occurred in this game, the base point will be multiplied by 2
 
 * Challenge 1: Had problems in drawing pictures on canvas. Can not find the correct way to add images paths into the project.
 * Solution 1: Checked the index page that Phoenix generated automatically (The one with "phoenix.png"), and tried the same way.
-
+---
 * Challenge 2: Had problems in adding event listeners on canvas.  Tried to add event listener to the context that I drew on canvas.
 * Solution 2: Found the answer on stack overflow, the problem is that you can only add one event listener to canvas instead of the context on the canvas. However, by adding click event on canvas and get the position user clicked, it is easy to add a listener for that position.
-
+---
 * Challenge 3: Tried to understand `componentDidMount()` and `componentDidUpdate()`.
 * Solution 3: Read React documents and checked some examples on line.
-
+---
 * Challenge 4: Separated the chat room from canvas. Adding chat room to canvas will cause the whole canvas to re-render when new messages come in.
 * Solution 4:  Added chat room parts as react components instead of on canvas.
 
@@ -400,16 +400,20 @@ For each bomb that occurred in this game, the base point will be multiplied by 2
 
 * Challenge 1: There are lots of legal categories of cards. 
 * Solution 1: Sort first, calculate combinations and using pattern matching to determine the categories.
-
+---
 * Challenge 2: How to pass the user name to the server?
 * Solution 2: Store the username in payload and pass to channel when join. Add names to the game state and store the corresponding player id in socket.
-
+---
 * Challenge 3: How to use one react state for every client view?
 * Solution: There are some common features shared by different players. When three players sitting beside a table, from one player’s point of view, other players are just a player to his or her left and a player to his or her right.  If we calculate the relative position to this player, then we can abstract a common client view for these players. 
-
+---
 * Challenge 4:  Customized view for different players and observers.
 * Solution 4: Carefully read the phoenix channel document and using `handle_in()`for different messages (interactions),  `broadcast()` to notify other clients in Pubsub and `handle_out()` to intercept the messages and customized for that socket. 
 
+
+## Reference
+
+* [Wiki Doudizhu](https://en.wikipedia.org/wiki/Dou_dizhu)
   
 
 
