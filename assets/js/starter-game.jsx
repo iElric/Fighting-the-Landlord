@@ -108,7 +108,7 @@ class FightingTheLandLord extends React.Component {
         if (this.state.phase === "call_landlord") {
             this.drawSides(ctx);
             this.drawSelfCards(ctx);
-            this.drawCallLandordButton(ctx);
+            this.drawCallLandlordButton(ctx);
             this.drawCardsLeft(ctx);
         }
         else if (this.state.phase === "card_play") {
@@ -167,7 +167,7 @@ class FightingTheLandLord extends React.Component {
             });
     }
 
-    drawCallLandordButton(ctx) {
+    drawCallLandlordButton(ctx) {
         if (this.state.active === true) {
             let callButton = new Image();
             let passButton = new Image();
