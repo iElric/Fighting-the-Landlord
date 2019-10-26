@@ -203,7 +203,7 @@ class FightingTheLandLord extends React.Component {
 
     drawSelfCards(ctx) {
         let self_cards = this.state.self.cards;
-        let self_start_x = 650 - self_cards.length / 2 * 50;
+        let self_start_x = 725 - self_cards.length * 25;
         let self_start_y = 700;
         let dx = 50;
         let i = 0;
@@ -300,7 +300,7 @@ class FightingTheLandLord extends React.Component {
             if (this.state.previous_play.position === "left" || this.state.previous_play.position === "right") {
 
                 let self_start_x = this.state.previous_play.position === "left" ? 150 : 1150;
-                let self_start_y = 120;
+                let self_start_y = 80;
                 let dx = 50;
                 let i = 0;
                 Promise.all(cards.map(x => this.loadImage(images_path[x])))
@@ -312,7 +312,7 @@ class FightingTheLandLord extends React.Component {
                     });
             }
             if (this.state.previous_play.position === "self") {
-                let self_start_x = 600;
+                let self_start_x = 725 - 25 * cards.length;
                 let self_start_y = 420;
                 let dx = 50;
                 let i = 0;
@@ -338,7 +338,7 @@ class FightingTheLandLord extends React.Component {
 
 
     onDown(event) {
-        let self_start_x = 650 - this.state.self.cards.length / 2 * 50;
+        let self_start_x = 725 - this.state.self.cards.length * 25;
         let card_size = this.state.self.cards.length;
         let cx = event.pageX;
         let cy = event.pageY;
